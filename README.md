@@ -53,7 +53,7 @@ This repository contains modules addressing multiple aspects:
 7. App state
 8. Event-driven microservices
 
-#### D. [Developer Aspects]((/todos-docs/developer.md))
+#### D. [Developer Aspects](/todos-docs/developer.md)
 
 ## The Microservices Playground
 
