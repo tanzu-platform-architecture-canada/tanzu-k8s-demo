@@ -18,10 +18,10 @@ Simply put, three things:
 ## What do the modules represent?
 This repository contains modules addressing multiple aspects:
 
-* Work together as a **"TODO application"**
+* Work together as a **TODO application**
 * Work individually as samples, highlighting particular cloud-native patterns built using [Spring Boot](http://spring.io/projects/spring-boot) and [Spring Cloud](https://spring.io/projects/spring-cloud)
-* Work natively on the [Tanzu Platform](https://cloud.vmware.com/tanzu) and any Kubernetes platform
-* Is a base application that can be delivered as part of a **[Developer Workshop](/todos-workshop/workshop.md)Developer Workshop
+* Work natively on the [Tanzu Platform](https://cloud.vmware.com/tanzu) and any other [Kubernetes platform](https://kubernetes.io)
+* Is a base application that can be delivered also as part of a **[Modern Application Developer Workshop](/todos-workshop/workshop.md)**
 
 ![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/todo-services.png "Application Flow")
 
