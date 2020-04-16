@@ -23,17 +23,17 @@ This repository contains modules addressing multiple aspects:
 * Work natively on the [Tanzu Platform](https://cloud.vmware.com/tanzu) and any Kubernetes platform
 * Is a base application that can be delivered as part of a **[Developer Workshop](/todos-workshop/workshop.md)Developer Workshop
 
-![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/todos-services.png "Application Flow")
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/todo-services.png "Application Flow")
 
 ## The TODO demo - table of contents
 
-A. TODO demo execution
+#### A. [TODO demo execution](/todos-docs/demo.md)
 1. Setting up a local environment
 2. Setting up the demo project
 3. Installing pre-requisite tools for running the TODO demo app
 4. Installing and running the TODO demo app
 
-B. The Tanzu portfolio tools 
+#### B. [The Tanzu portfolio tools](/todos-docs/tanzu-portfolio.md)
 
 1. Tanzu Mission Control
 2. Wavefront for Tanzu platform
@@ -42,7 +42,7 @@ B. The Tanzu portfolio tools
 5. Harbor Registry
 6. Spring Cloud Config Server
 
-C. The cloud-native patterns
+#### C. [The cloud-native patterns](/todos-docs/patterns.md)
 
 1. Application lifecycle
 2. Observability
