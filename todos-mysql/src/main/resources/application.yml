@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: todos-mysql
+  datasource:
+    url: jdbc:mysql://todo-mysql-instance-mariadb.default.svc.cluster.local/my_database?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+#    url: jdbc:mysql://localhost/test?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+management:
+  metrics:
+    export:
+      wavefront:
+        uri: https://vmware.wavefront.com
+        apiToken: <TOKEN>
+        step: PT10S
+        #proxy:
+        #host: wavefront-proxy.wavefront.svc.cluster.local
+        #port: 2878
+        #histogram_port: 40000
+        #tracing_port:  30000
+
+        reporting:
+          #duration=(reporting duration, intervals between spring micrometer reporting)
+          traces: true
+
+        application:
+          name: Todos Application
+          service: ${spring.application.name}
+server:
+  port: 9090

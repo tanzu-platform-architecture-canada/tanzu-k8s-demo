@@ -1,0 +1,62 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todos-mysql
+  labels:
+    app: todos-mysql
+spec:
+  ports:
+    - port: 9090
+      targetPort: 9090
+      name: boot
+  selector:
+    app: todos-mysql
+  type: LoadBalancer
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: todos-mysql-ingress
+spec:
+  rules:
+    - host: localhost
+      http:
+        paths:
+          - backend:
+              serviceName: todos-mysql
+              servicePort: 9090
+  tls:
+    - hosts:
+        - localhost
+      secretName: ingress-tls
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todos-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todos-mysql
+  template:
+    metadata:
+      name: todos-mysql
+      labels:
+        app: todos-mysql
+    spec:
+      containers:
+        - image: triathlonguy/todos-mysql:latest
+          name: todos-mysql
+          ports:
+            - containerPort: 9090
+              protocol: TCP
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://todo-mysql-instance-mariadb.default.svc.cluster.local/my_database?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
+              # value: "jdbc:mysql://localhost/test?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "topsecret"

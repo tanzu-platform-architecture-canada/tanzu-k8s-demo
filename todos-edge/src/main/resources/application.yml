@@ -1,0 +1,65 @@
+todos:
+  api:
+    endpoint: http://localhost:8081
+  ui:
+    endpoint: http://localhost:8080
+
+zuul:
+  routes:
+    ui:
+      path: /**
+      url:  ${todos.ui.endpoint}
+      stripPrefix: false
+    api:
+      path: /todos/**
+      url:  ${todos.api.endpoint}
+      stripPrefix: true
+
+spring:
+  application:
+    name: todos-edge
+  cloud:
+    gateway:
+      routes:
+      - id: todos_all_api
+        uri: ${todos.api.endpoint}
+        predicates:
+        - Path=/todos/**
+        filters:
+        - SetResponseHeader=X-TODOS-CLOUD-GATEWAY-ROUTE-ID, todos_all_api
+        - RewritePath=/todos/(?<path>.*), /$\{path}
+      - id: todos_ui_root
+        uri: ${todos.ui.endpoint}
+        predicates:
+        - Path=/**
+server:
+  port: 9999
+management:
+  metrics:
+    export:
+      wavefront:
+        uri: https://vmware.wavefront.com
+        apiToken: <TOKEN>
+        step: PT10S
+          #proxy:
+          #host: wavefront-proxy.wavefront.svc.cluster.local
+        #port: 2878
+        #histogram_port: 40000
+        #tracing_port:  30000
+
+        reporting:
+          #duration=(reporting duration, intervals between spring micrometer reporting)
+          traces: true
+
+        application:
+          name: Todos Application
+          service: ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+ribbon:
+  http:
+    client:
+      enabled: false

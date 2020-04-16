@@ -11,7 +11,7 @@ Its documentation shall always reflect the capabilities offered within its modul
 ## Why this demo? 
 Simply put, three things:
 
-1. A developer playground for all things [Spring Boot](http://spring.io/projects/spring-boot) using the [TODO domain model](http://todomvc.com). The "TODO" model is well understood, concise and consistent, which makes it useful for reasoning about and looking into multiple frameworks, tools and protocols
+1. A microservices developer playground for all things [Spring Boot](http://spring.io/projects/spring-boot) using the [TODO domain model](http://todomvc.com). The "TODO" model is well understood, concise and consistent, which makes it useful for reasoning about and looking into multiple frameworks, tools and protocols
 2. An illustration of how Tanzu Portfolio components help teams address the three main areas of the work: **Build -- Run -- Manage**
 3. An educational tool for illustrating **cloud-native patterns** with simple and clear examples
 
@@ -25,7 +25,7 @@ This repository contains modules addressing multiple aspects:
 
 ![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/todo-services.png "Application Flow")
 
-## The TODO demo - table of contents
+## Table of Contents
 
 #### A. [TODO demo execution](/todos-docs/demo.md)
 1. Setting up a local environment
@@ -52,6 +52,8 @@ This repository contains modules addressing multiple aspects:
 6. App configuration
 7. App state
 8. Event-driven microservices
+
+#### D. [Developer Aspects]((/todos-docs/developer.md))
 
 ## The Microservices Playground
 
