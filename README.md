@@ -1,1 +1,86 @@
-# tanzu-k8s-demo
+# Welcome to the Tanzu Kubernetes Demo
+
+## The audience
+Developers, Architects and Engineers interested in learning about different aspects of the Tanzu Portfolio
+
+## The evolution
+This demo project is considered a living project, which evolves constantly and incorporates the usage of new tools, communication protocols and cloud-native patterns. 
+
+Its documentation shall always reflect the capabilities offered within its modules.
+
+## Why this demo? 
+Simply put, three things:
+
+1. A developer playground for all things [Spring Boot](http://spring.io/projects/spring-boot) using the [TODO domain model](http://todomvc.com). The "TODO" model is well understood, concise and consistent, which makes it useful for reasoning about and looking into multiple frameworks, tools and protocols
+2. An illustration of how Tanzu Portfolio components help teams address the three main areas of the work: **Build -- Run -- Manage**
+3. An educational tool for illustrating **cloud-native patterns** with simple and clear examples
+
+## What do the modules represent?
+This repository contains modules addressing multiple aspects:
+
+* Work together as a **"TODO application"**
+* Work individually as samples, highlighting particular cloud-native patterns built using [Spring Boot](http://spring.io/projects/spring-boot) and [Spring Cloud](https://spring.io/projects/spring-cloud)
+* Work natively on the [Tanzu Platform](https://cloud.vmware.com/tanzu) and any Kubernetes platform
+* Is a base application that can be delivered as part of a **[Developer Workshop](/todos-workshop/workshop.md)Developer Workshop
+
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/todos-services.png "Application Flow")
+
+## The TODO demo - table of contents
+
+A. TODO demo execution
+1. Setting up a local environment
+2. Setting up the demo project
+3. Installing pre-requisite tools for running the TODO demo app
+4. Installing and running the TODO demo app
+
+B. The Tanzu portfolio tools 
+
+1. Tanzu Mission Control
+2. Wavefront for Tanzu platform
+3. Tanzu Build Service
+4. Tanzu Application Catalog
+5. Harbor Registry
+6. Spring Cloud Config Server
+
+C. The cloud-native patterns
+
+1. Application lifecycle
+2. Observability
+3. Security
+4. Fronting services
+5. Accessing applications
+6. App configuration
+7. App state
+8. Event-driven microservices
+
+## The Microservices Playground
+
+### [__todos-edge__](/todos-edge)
+
+TODO(s) Edge is an edge for other TODO apps and serves as a client entry-point into functionality.
+
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/edge.png "todos-edge")
+
+### [__todos-webui__](/todos-webui)
+
+A sample frontend [Vue.js](https://vuejs.org/) app wrapped in [Spring Boot](https://spring.io/projects/spring-boot)
+
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/ui.png "todos-ui")
+
+### [__todos-api__](/todos-api)
+
+A sample [Spring Boot](https://spring.io/projects/spring-boot) microservice that uses spring-boot-starter-web to implement a Spring MVC based REST API for TODO(s)
+
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/rest-api.png "todos-api")
+
+### [__todos-redis__](/todos-redis)
+
+A sample [Spring Boot](https://spring.io/projects/spring-boot) service that uses JPA and Spring Data Redis to cache data.
+
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/redis.png "todos-redis")
+
+### [__todos-mysql__](/todos-mysql)
+
+A sample [Spring Boot](https://spring.io/projects/spring-boot) service that that provides data persistence in a MySQL DB using JPA.
+
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/mysql.png "todos-myswl")
