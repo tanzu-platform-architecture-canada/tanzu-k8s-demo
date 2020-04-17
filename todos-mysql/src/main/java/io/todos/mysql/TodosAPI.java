@@ -41,8 +41,8 @@ public class TodosAPI {
         if(!ObjectUtils.isEmpty(todo.isComplete())) {
             obj.setComplete(todo.isComplete());
         }
-        if(!ObjectUtils.isEmpty(todo.getGroup())) {
-            obj.setGroup(todo.getGroup());
+        if(!ObjectUtils.isEmpty(todo.getCategory())) {
+            obj.setCategory(todo.getCategory());
         }
         if(!ObjectUtils.isEmpty(todo.getDeadline())) {
             obj.setDeadline(todo.getDeadline());
@@ -102,8 +102,8 @@ public class TodosAPI {
         if (!StringUtils.isEmpty(todo.getTitle())) {
             existing.setTitle(todo.getTitle());
         }
-        if(!ObjectUtils.isEmpty(todo.getGroup())) {
-            existing.setGroup(todo.getGroup());
+        if(!ObjectUtils.isEmpty(todo.getCategory())) {
+            existing.setCategory(todo.getCategory());
         }
         if(!ObjectUtils.isEmpty(todo.getDeadline())) {
             existing.setDeadline(todo.getDeadline());

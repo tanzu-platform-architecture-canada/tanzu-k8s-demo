@@ -2,11 +2,9 @@ package io.todos.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
@@ -74,10 +72,10 @@ public class TodosController {
         if(!ObjectUtils.isEmpty(todo.isComplete())) {
             obj.setComplete(todo.isComplete());
         }
-        if(ObjectUtils.isEmpty(todo.getGroup())) {
-            obj.setGroup(DEFAULT_GROUP);
+        if(ObjectUtils.isEmpty(todo.getCategory())) {
+            obj.setCategory(DEFAULT_GROUP);
         } else {
-            obj.setGroup(todo.getGroup());
+            obj.setCategory(todo.getCategory());
         }
         if(ObjectUtils.isEmpty(todo.getDeadline())) {
             obj.setDeadline(dtf.format(LocalDateTime.now()));
@@ -111,10 +109,10 @@ public class TodosController {
         if(!ObjectUtils.isEmpty(todo.isComplete())) {
             obj.setComplete(todo.isComplete());
         }
-        if(ObjectUtils.isEmpty(todo.getGroup())) {
-            obj.setGroup(DEFAULT_GROUP);
+        if(ObjectUtils.isEmpty(todo.getCategory())) {
+            obj.setCategory(DEFAULT_GROUP);
         } else {
-            obj.setGroup(todo.getGroup());
+            obj.setCategory(todo.getCategory());
         }
         if(ObjectUtils.isEmpty(todo.getDeadline())) {
             obj.setDeadline(dtf.format(LocalDateTime.now()));
@@ -190,10 +188,10 @@ public class TodosController {
         if(!ObjectUtils.isEmpty(todo.isComplete())) {
             obj.setComplete(todo.isComplete());
         }
-        if(ObjectUtils.isEmpty(todo.getGroup())) {
-            obj.setGroup(DEFAULT_GROUP);
+        if(ObjectUtils.isEmpty(todo.getCategory())) {
+            obj.setCategory(DEFAULT_GROUP);
         } else {
-            obj.setGroup(todo.getGroup());
+            obj.setCategory(todo.getCategory());
         }
         if(ObjectUtils.isEmpty(todo.getDeadline())) {
             obj.setDeadline(dtf.format(LocalDateTime.now()));

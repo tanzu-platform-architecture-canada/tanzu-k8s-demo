@@ -1,14 +1,12 @@
 package io.todos.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,8 +41,8 @@ public class TodosAPI {
         if(!ObjectUtils.isEmpty(todo.isComplete())) {
             obj.setComplete(todo.isComplete());
         }
-        if(!ObjectUtils.isEmpty(todo.getGroup())) {
-            obj.setGroup(todo.getGroup());
+        if(!ObjectUtils.isEmpty(todo.getCategory())) {
+            obj.setCategory(todo.getCategory());
         }
         if(!ObjectUtils.isEmpty(todo.getDeadline())) {
             obj.setDeadline(todo.getDeadline());
@@ -104,8 +102,8 @@ public class TodosAPI {
         if (!StringUtils.isEmpty(todo.getTitle())) {
             existing.setTitle(todo.getTitle());
         }
-        if(!ObjectUtils.isEmpty(todo.getGroup())) {
-            existing.setGroup(todo.getGroup());
+        if(!ObjectUtils.isEmpty(todo.getCategory())) {
+            existing.setCategory(todo.getCategory());
         }
         if(!ObjectUtils.isEmpty(todo.getDeadline())) {
             existing.setDeadline(todo.getDeadline());

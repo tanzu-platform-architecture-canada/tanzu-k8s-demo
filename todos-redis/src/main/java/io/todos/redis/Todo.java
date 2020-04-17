@@ -10,7 +10,7 @@ public class Todo {
     private String id;
     private String title;
     private boolean complete;
-    private String group;
+    private String category;
     private String deadline;
 
     public String getId() {
@@ -37,12 +37,12 @@ public class Todo {
         this.complete = complete;
     }
 
-    public String getGroup() {
-        return group;
+    public String getCategory() {
+        return category;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getDeadline() { return deadline; }

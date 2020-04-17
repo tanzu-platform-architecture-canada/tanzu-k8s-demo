@@ -5,7 +5,7 @@
 Create:
 ```http
 # create with minimum items, defaults:
-# group to Default group 
+# category to Default category 
 # deadline to local time in "yyyy/mm/dd" format
 # id is assigned a UUID if not set
 
@@ -22,7 +22,7 @@ curl --location --request POST 'localhost:8081' \
 --data-raw '{
     "completed": false,
     "title": "item1",
-    "group": "personal",
+    "category": "personal",
     "deadline": "2020/04/20"
 }'
 
@@ -33,7 +33,7 @@ curl --location --request POST 'localhost:8081/1' \
     "completed": false,
     "id": "1",
     "title": "item1",
-    "group": "personal",
+    "category": "personal",
     "deadline": "2020/04/20"
 }'
 ```
@@ -47,7 +47,7 @@ curl --location --request PATCH 'localhost:8081/1' \
     "completed": false,
     "id": "1",
     "title": "item1",
-    "group": "personal",
+    "category": "personal",
     "deadline": "2020/04/20"
 }'
 ```
@@ -80,7 +80,7 @@ curl --location --request POST 'localhost:8888' \
         "id": "item12",
         "title": "Add demo todo item #12",
         "complete": false,
-        "group": "personal",
+        "category": "personal",
         "deadline": "2020/04/20"
     }'
 
@@ -91,7 +91,7 @@ curl --location --request POST 'localhost:8888' \
         "id": "item12",
         "title": "Add demo todo item #12",
         "complete": false,
-        "group": "business",
+        "category": "business",
         "deadline": "2020/04/20"
     }'
     

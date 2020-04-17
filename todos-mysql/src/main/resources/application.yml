@@ -2,8 +2,8 @@ spring:
   application:
     name: todos-mysql
   datasource:
-    url: jdbc:mysql://todo-mysql-instance-mariadb.default.svc.cluster.local/my_database?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-#    url: jdbc:mysql://localhost/test?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+#    url: jdbc:mysql://todo-mysql-instance-mariadb.default.svc.cluster.local/my_database?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost/test?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
   jpa:
     hibernate:
       ddl-auto: update
