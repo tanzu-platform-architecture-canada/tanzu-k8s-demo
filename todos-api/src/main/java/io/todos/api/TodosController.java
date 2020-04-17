@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -144,13 +145,33 @@ public class TodosController {
     public Todo retrieve(@PathVariable("id") String id) {
         LOG.debug("Retrieving Todo: " + id);
         //Check cache + DB
-        Todo cached = _cacheTemplate.getForEntity(_cacheUrl + "/" + id, Todo.class).getBody();
+        Todo cached = null;
+        try {
+            cached = _cacheTemplate.getForEntity(_cacheUrl + "/" + id, Todo.class).getBody();
+        } catch (HttpStatusCodeException ex) {
+            if(ex.getRawStatusCode() != 404) {
+                LOG.error("Caching service error downstream", ex);
+                throw ex;
+            }
+        }
+
         if(cached != null) {
+            // found in cache
             LOG.debug("Found cached version");
             return cached;
         } else {
             LOG.debug("Not in cache, retrieving from backend");
-            Todo source = _backendTemplate.getForEntity(_backendUrl + "/" + id, Todo.class).getBody();
+
+            Todo source = null;
+            try{
+                source = _backendTemplate.getForEntity(_backendUrl + "/" + id, Todo.class).getBody();
+            } catch (HttpStatusCodeException ex) {
+                if(ex.getRawStatusCode() != 404) {
+                    LOG.error("Database service error downstream", ex);
+                    throw ex;
+                }
+            }
+
             if(source != null) {
                 LOG.debug("Found in backend");
                 cached = _cacheTemplate.postForObject(_cacheUrl, source, Todo.class);
