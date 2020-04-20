@@ -15,16 +15,6 @@ Simply put, three things:
 2. An illustration of how Tanzu Portfolio components help teams address the three main areas of the work: **Build -- Run -- Manage**
 3. An educational tool for illustrating **cloud-native patterns** with simple and clear examples
 
-## What do the modules represent?
-This repository contains modules addressing multiple aspects:
-
-* Work together as a **TODO application**
-* Work individually as samples, highlighting particular cloud-native patterns built using [Spring Boot](http://spring.io/projects/spring-boot) and [Spring Cloud](https://spring.io/projects/spring-cloud)
-* Work natively on the [Tanzu Platform](https://cloud.vmware.com/tanzu) and any other [Kubernetes platform](https://kubernetes.io)
-* Is a base application that can be delivered also as part of a **[Modern Application Developer Workshop](/todos-workshop/workshop.md)**
-
-![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/todo-services.png "Application Flow")
-
 ## Table of Contents
 
 #### A. [TODO demo execution](/todos-docs/demo.md)
@@ -37,7 +27,7 @@ This repository contains modules addressing multiple aspects:
 
 1. Tanzu Mission Control
 2. Wavefront for Tanzu platform
-3. Tanzu Build Service
+3. [Tanzu Build Service](/todos-docs/tbs.md) 
 4. Tanzu Application Catalog
 5. Harbor Registry
 6. Spring Cloud Config Server
@@ -54,6 +44,15 @@ This repository contains modules addressing multiple aspects:
 8. Event-driven microservices
 
 #### D. [Developer Aspects](/todos-docs/developer.md)
+## What do the modules represent?
+This repository contains modules addressing multiple aspects:
+
+* Work together as a **TODO application**
+* Work individually as samples, highlighting particular cloud-native patterns built using [Spring Boot](http://spring.io/projects/spring-boot) and [Spring Cloud](https://spring.io/projects/spring-cloud)
+* Work natively on the [Tanzu Platform](https://cloud.vmware.com/tanzu) and any other [Kubernetes platform](https://kubernetes.io)
+* Is a base application that can be delivered also as part of a **[Modern Application Developer Workshop](/todos-workshop/workshop.md)**
+
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/todo-services.png "Application Flow")
 
 ## The Microservices Playground
 

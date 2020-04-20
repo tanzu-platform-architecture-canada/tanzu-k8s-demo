@@ -1,0 +1,23 @@
+apiVersion: build.pivotal.io/v1alpha1
+kind: Image
+metadata:
+  name: todos-api
+spec:
+  tag: triathlonguy/todos-api:blue # Set your Docker image
+  serviceAccount: kpack-service-account
+  builder:
+    name: default
+    kind: ClusterBuilder
+  cacheSize: "1Gi"
+  source:
+    git:
+      url: https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo 
+      revision: master
+  build:
+    env:
+      - name: BP_JAVA_VERSION
+        value: 8.* # Java 11 is used by default
+      - name: BP_BUILT_MODULE
+        value: todos-api
+      - name: BP_BUILD_ARGUMENTS
+        value: "-Dmaven.test.skip=false package -pl todos-api -am"
