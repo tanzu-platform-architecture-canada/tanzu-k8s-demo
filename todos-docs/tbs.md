@@ -57,7 +57,7 @@ The following script allows building multiple individual modules from within the
 
 # Building and publishing with cloud-native buildpacks
 
-# buildpack in use: cloudfoundry/cnb:bionic
+# buildpack in use: gcr.io/paketo-buildpacks/builder:base
 # published to https://hub.docker.com/repositories/triathlonguy 
 
 # where:
@@ -70,17 +70,19 @@ The following script allows building multiple individual modules from within the
 # builder --> the name of the builder to use, if not set as default (ex. cloudfoundry/cnb:bionic)
 # publish --> indicates whether the image will be published to the repository
 # env variables:
+#   BP_JAVA_VERSION --> 8.* (11.*) is the default
 #   BP_BUILT_MODULE --> the module to build (ex. message-service)
 #   BP_BUILD_ARGUMENTS --> build arguments 
 #       pl --> Comma-delimited list of specified reactor projects to build instead
 #                of all projects. A project can be specified by [groupId]:artifactId
 #                   or by its relative path
 #       am --> If project list is specified, also build projects required by the listpack build triathlonguy/todos-api --publish --path . --builder cloudfoundry/cnb:bionic --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
-pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
-pack build triathlonguy/todos-edge --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-edge --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-edge -am"
-pack build triathlonguy/todos-webui --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-webui --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-webui -am"
-pack build triathlonguy/todos-mysql --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-mysql --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-mysql -am"
-pack build triathlonguy/todos-redis --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-redis --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-redis -am"
+
+pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_JAVA_VERSION="8.*" --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+pack build triathlonguy/todos-edge --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_JAVA_VERSION="8.*" --env BP_BUILT_MODULE=todos-edge --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-edge -am"
+pack build triathlonguy/todos-webui --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_JAVA_VERSION="8.*" --env BP_BUILT_MODULE=todos-webui --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-webui -am"
+pack build triathlonguy/todos-mysql --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_JAVA_VERSION="8.*" --env BP_BUILT_MODULE=todos-mysql --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-mysql -am"
+pack build triathlonguy/todos-redis --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_JAVA_VERSION="8.*" --env BP_BUILT_MODULE=todos-redis --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-redis -am"
 ```
 
 <a name="2"></a>
@@ -227,7 +229,7 @@ spec:
   build:
     env:
       - name: BP_JAVA_VERSION
-        value: 11.*     # --> Java 11 is used by default, you can set the Java version you require
+        value: 8.*     # --> Java 11 is used by default, you can set the Java version you require
       - name: BP_BUILT_MODULE # --> set the module to be built 
         value: message-service
       - name: BP_BUILD_ARGUMENTS # --> set the Maven build arguments
@@ -247,4 +249,18 @@ Create the Image resource:
 > kubectl apply -f todos-k8s/app-source-todos-api.yaml
 ```
 
+The image build oricess can be observed using the [logs utility](https://github.com/pivotal/kpack/blob/master/docs/logs.md):
+```
+./logs -image todos-api
+./logs -image todos-webui
+```
 
+
+When the image is built, it can be found in:
+```
+> kubectl get images
+
+NAME        LATESTIMAGE                                                                                                        READY
+todos-api   index.docker.io/triathlonguy/todos-api@sha256:d3d846f7052eb02e75cf375b7ee044024bb5d66653524dc57319b7c1c7063c1b     True
+todos-webui index.docker.io/triathlonguy/todos-webui@sha256:6f7d81929a95ce1cb7eddfe5894a98ecfeaa09be8aa6210a8a01d587fba0d9ed   True
+```
