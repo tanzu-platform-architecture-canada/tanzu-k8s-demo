@@ -7,4 +7,4 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: ddobrin
-  password: 34a0b2169abc48e13489546f8da0812b30db280a
+  password: febc7f4a78762d0ff8c6b652da05d9c3c5eaf595

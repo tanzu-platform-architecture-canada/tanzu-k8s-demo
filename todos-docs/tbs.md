@@ -29,8 +29,8 @@ You'll need a Docker daemon running to build container images.
 If you run `pack` CLI for the first time, you need to set a default
 builder:
 ```bash
-> pack set-default-builder cloudfoundry/cnb:bionic
-Builder cloudfoundry/cnb:bionic is now the default builder
+> pack set-default-builder gcr.io/paketo-buildpacks/builder:base
+Builder Paketo: gcr.io/paketo-buildpacks/builder:base is now the default builder
 ```
 
 You may select one of the suggested builders:
@@ -76,10 +76,11 @@ The following script allows building multiple individual modules from within the
 #                of all projects. A project can be specified by [groupId]:artifactId
 #                   or by its relative path
 #       am --> If project list is specified, also build projects required by the listpack build triathlonguy/todos-api --publish --path . --builder cloudfoundry/cnb:bionic --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
-pack build triathlonguy/todos-edge --publish --path . --builder cloudfoundry/cnb:bionic --env BP_BUILT_MODULE=todos-edge --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-edge -am"
-pack build triathlonguy/todos-webui --publish --path . --builder cloudfoundry/cnb:bionic --env BP_BUILT_MODULE=todos-webui --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-webui -am"
-pack build triathlonguy/todos-mysql --publish --path . --builder cloudfoundry/cnb:bionic --env BP_BUILT_MODULE=todos-mysql --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-mysql -am"
-pack build triathlonguy/todos-redis --publish --path . --builder cloudfoundry/cnb:bionic --env BP_BUILT_MODULE=todos-redis --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-redis -am"
+pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+pack build triathlonguy/todos-edge --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-edge --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-edge -am"
+pack build triathlonguy/todos-webui --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-webui --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-webui -am"
+pack build triathlonguy/todos-mysql --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-mysql --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-mysql -am"
+pack build triathlonguy/todos-redis --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-redis --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-redis -am"
 ```
 
 <a name="2"></a>
@@ -113,7 +114,7 @@ kind: ClusterBuilder
 metadata:
   name: default
 spec:
-  image: cloudfoundry/cnb:bionic
+  image: gcr.io/paketo-buildpacks/builder:base # previously: cloudfoundry/cnb:bionic
 ```
 
 Create it by running:
@@ -123,6 +124,10 @@ Create it by running:
 # Validate that it is running:
 > kubectl get clusterbuilder
 
+NAME      LATESTIMAGE                                                                                                READY
+default   gcr.io/paketo-buildpacks/builder@sha256:baaf85bc39cb43e364630625590c13b921b7bcfbfd4b30c6d8dfabd56024e6a5   True
+
+# Previously:
 NAME      LATESTIMAGE                                                                                                READY
 default   index.docker.io/cloudfoundry/cnb@sha256:baaf85bc39cb43e364630625590c13b921b7bcfbfd4b30c6d8dfabd56024e6a5   True
 ```
@@ -203,13 +208,13 @@ spring-cloud            1         30d
 ```
 5. Finally, we need to create the Image resource for building the Docker image
 ```
-# app-source-bg-kbs.yml
+# app-source-todos-api
 apiVersion: build.pivotal.io/v1alpha1
 kind: Image
 metadata:
-  name: message-service 
+  name: todos-api 
 spec:
-  tag: triathlonguy/message-service:blue # --> Set your Docker image
+  tag: triathlonguy/todos-api:blue # --> Set your Docker image
   serviceAccount: kpack-service-account
   builder:
     name: default

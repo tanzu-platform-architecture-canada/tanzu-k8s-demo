@@ -3,5 +3,5 @@ kind: ClusterBuilder
 metadata:
   name: default
 spec:
-  image: cloudfoundry/cnb:bionic
+  image: gcr.io/paketo-buildpacks/builder:base # cloudfoundry/cnb:bionic
   
