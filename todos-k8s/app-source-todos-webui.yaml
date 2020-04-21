@@ -1,9 +1,9 @@
 apiVersion: build.pivotal.io/v1alpha1
 kind: Image
 metadata:
-  name: todos-api
+  name: todos-webui
 spec:
-  tag: triathlonguy/todos-api:blue # Set your Docker image
+  tag: triathlonguy/todos-webui:blue # Set your Docker image
   serviceAccount: kpack-service-account
   builder:
     name: default
@@ -18,6 +18,6 @@ spec:
       - name: BP_JAVA_VERSION
         value: "8.*" # Java 11 is used by default
       - name: BP_BUILT_MODULE
-        value: todos-api
+        value: todos-webui
       - name: BP_BUILD_ARGUMENTS
-        value: "-Dmaven.test.skip=false package -pl todos-api -am"
+        value: "-Dmaven.test.skip=false package -pl todos-webui -am"
