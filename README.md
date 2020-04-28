@@ -28,7 +28,7 @@ Simply put, three things:
 1. Tanzu Mission Control
 2. Wavefront for Tanzu platform
 3. [Tanzu Build Service](/todos-docs/tbs.md) 
-4. Tanzu Application Catalog
+4. [Tanzu Application Catalog](/todos-docs/local-harbor.md)
 5. Harbor Registry
 6. Spring Cloud Config Server
 
