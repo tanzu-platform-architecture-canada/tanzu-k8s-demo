@@ -22,7 +22,7 @@ brew install kind
 
 Create a kind based cluster.
 
-*Note the use of "extraPortMappings"
+*Note the use of "extraPortMappings"*
 
 ```
 cat <<EOF | kind create cluster --config=-
@@ -94,7 +94,7 @@ brew install helm
 
 ## Install Harbor
 
-Now that we have Kubernetes and Helm, installing Harbor is straighforward, though there are many options available in the Helm chart. We will not be making any changes and use the defaults provided.
+Now that we have Kubernetes and Helm, installing Harbor is straight forward, though there are many options available in the Helm chart. We will not be making any changes and use the defaults provided.
 
 Add the Harbor Helm repository.
 
