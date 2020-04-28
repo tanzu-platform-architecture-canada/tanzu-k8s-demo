@@ -29,7 +29,7 @@ Simply put, three things:
 2. Wavefront for Tanzu platform
 3. [Tanzu Build Service](/todos-docs/tbs.md) 
 4. Tanzu Application Catalog
-5. Harbor Registry
+5. [Harbor Registry](/todos-docs/local-harbor.md)
 6. Spring Cloud Config Server
 
 #### C. [The cloud-native patterns](/todos-docs/patterns.md)
