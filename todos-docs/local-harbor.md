@@ -96,6 +96,35 @@ brew install helm
 
 Now that we have Kubernetes and Helm, installing Harbor is straighforward, though there are many options available in the Helm chart. We will not be making any changes and use the defaults provided.
 
+Add the Harbor Helm repository.
+
+```
+helm repo add harbor https://helm.goharbor.io
+```
+
+And install Harbor:
+
+```
+helm install local-harbor harbor/harbor
+```
+
+After a few minutes, there should be several Harbor k8s objects, such as pods.
+
+```
+$ k get pods
+NAME                                                 READY   STATUS    RESTARTS   AGE
+local-harbor-harbor-chartmuseum-bd9c45cbc-gwkbj      1/1     Running   0          58s
+local-harbor-harbor-clair-865c9bc5db-cvbk8           1/2     Running   2          58s
+local-harbor-harbor-core-64479f8d85-rkqm2            1/1     Running   0          58s
+local-harbor-harbor-database-0                       1/1     Running   0          58s
+local-harbor-harbor-jobservice-8448b58df7-pgknp      1/1     Running   0          58s
+local-harbor-harbor-notary-server-5bd9f5d966-56kk6   1/1     Running   0          58s
+local-harbor-harbor-notary-signer-5fbfb48945-l2x54   1/1     Running   0          58s
+local-harbor-harbor-portal-756d5d7d9d-xlv2g          1/1     Running   0          58s
+local-harbor-harbor-redis-0                          1/1     Running   0          58s
+local-harbor-harbor-registry-57989b6446-w8vd8        2/2     Running   0          58s
+```
+
 ## Access Harbor
 
 Add a hostname to your `/etc/hosts` file.
