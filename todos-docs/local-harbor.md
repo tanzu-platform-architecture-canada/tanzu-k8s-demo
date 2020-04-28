@@ -112,3 +112,14 @@ password: Harbor12345
 ```
 
 At this point Harbor is available for local use.
+
+## Delete Harbor and Kind 
+
+To remove everything added:
+
+```
+helm uninstall local-harbor
+kind delete cluster
+```
+
+Then shutdown Docker for Desktop.
