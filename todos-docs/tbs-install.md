@@ -1,4 +1,5 @@
-# Short-form installation of Tanzu Build Service on upstream K8s on a local machine
+# Short-form installation of Tanzu Build Service
+## Installation on upstream K8s on a local machine
 
 ##### Prerequisites
 * Install [Docker Desktop](https://hub.docker.com/editions/community/docker-ce-desktop-mac) : You will use this to create your local Kubernetes cluster, as well as to run your containers built by Tanzu Build Service.
@@ -126,6 +127,7 @@ Successfully added user 'ddobrin' to 'cnb-demo'
 ```
 
 #### List all project users
+```yaml
 > pb project members
 Project: cnb-demo
 
@@ -137,6 +139,7 @@ triathlonguy
 
 Groups
 ------
+```
 
 #### Configure the DockerHub credentials for the project
 ```yaml
