@@ -4,19 +4,6 @@
     1. [Building with ```cloud-native buildpacks```](#1)
     2. [Building with ```kpacks```](#2)
 2. Build Service use-cases
-3. Tanzu Build Service
-    1. Use cases
-    2. Installing TBS
-    3. Updating TBS
-    4. Build Service Architecture
-    5. Managing Components
-        a. Stack
-        b. Store
-        c. Projects
-        d. Builders
-        e. Secrets
-        f. Images and Builds
-        g. use the build service without projects
 
 <a name="1"></a>
 ## Building with ```cloud-native buildpacks```

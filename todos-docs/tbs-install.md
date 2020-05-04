@@ -1,4 +1,4 @@
-# Tanzu Build Service - installation on upstream K8s on a local machine
+# Tanzu Build Service - installation on any K8s - local env
 
 Setup
 * [Pre-requisites](#1)
