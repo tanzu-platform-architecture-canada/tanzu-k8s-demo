@@ -1,6 +1,20 @@
-# Short-form installation of Tanzu Build Service on upstream K8s on a local machine
+# Tanzu Build Service - installation on upstream K8s on a local machine
 
-##### Prerequisites
+Setup
+* [Pre-requisites](#1)
+
+Default Builder
+
+* [Install Tanzu Build Service - default uses a Default Builder](#2)
+* [Create a project and build repositories with the Default Builder](#3)
+
+Custom Builders
+* [Install a Custom Cluster Builder in the Build Service](#4)
+* [Build repositories with custom builders](#5)
+
+---
+<a name="1"></a>
+## Prerequisites
 * Install [Docker Desktop](https://hub.docker.com/editions/community/docker-ce-desktop-mac) : You will use this to create your local Kubernetes cluster, as well as to run your containers built by Tanzu Build Service.
 * Create a [Docker Hub account](https://hub.docker.com): This is where Tanzu Build Service will push your built images for you to pull down and run. It is also where you will push your Tanzu Build Service build images during the install process.
 * Install the [Pivnet CLI](https://github.com/pivotal-cf/pivnet-cli): This is an easy way to download applications and bundles from the [VMware Tanzu Marketplace](https://tanzu.vmware.com/services-marketplace), straight from the command line, without worrying about passing credentials in curl headers. If you would rather, you can modify commands used in this post to use curl, wget, or similar.
@@ -47,7 +61,8 @@ credentials:
 > duffle relocate -f ./build-service-0.1.0.tgz -m ./relocated.json -p triathlonguy
 ```
 
-## Install Tanzu Build Service
+<a name="2"></a>
+## Install Tanzu Build Service - default uses a Default Builder
 ```shell
 > duffle install tbs-deploy-local -c credentials --set kubernetes_env=docker-desktop --set docker_registry=index.docker.io --set docker_repository='triathlonguy'  --set registry_username='triathlonguy'  --set registry_password='ship2020pa'  --set custom_builder_image="triathlonguy/default-builder" -f /tmp/build-service-0.1.0.tgz  -m /tmp/relocated.json -v
 
@@ -61,7 +76,7 @@ credentials:
         -m /tmp/relocated.json -v
 ```
 
-## Uninstall Tanzu Build Service
+#### Uninstall Tanzu Build Service
 ```shell
 > duffle uninstall tbs-deploy-local -c credentials --set kubernetes_env=docker-desktop --set docker_registry=index.docker.io --set docker_repository=“index.docker.io/triathlonguy”  --set registry_username=“triathlonguy”  --set registry_password=“ship2020pa”   -m /tmp/relocated.json -v
 ```
@@ -88,7 +103,10 @@ Note: PB CLI does not work until TBS is installed on the machine
 CLI Version: 0.1.0 (e9b0e13a)
 ```
 
-### Demo app - CNB SpringBoot demo 
+<a name="3"></a>
+## Create a project and build repositories with the Default Builder
+
+#### The Demo app - CNB SpringBoot demo 
 This document uses a simple Spring demo application for cloud-native buildpacks, with a simple UI for illustrative purposes.
 
 ```shell
@@ -126,6 +144,7 @@ Successfully added user 'ddobrin' to 'cnb-demo'
 ```
 
 #### List all project users
+```shell
 > pb project members
 Project: cnb-demo
 
@@ -137,6 +156,7 @@ triathlonguy
 
 Groups
 ------
+```
 
 #### Configure the DockerHub credentials for the project
 ```yaml
@@ -332,4 +352,188 @@ Build    Status     Started Time           Finished Time          Reason    Dige
     CONFIG: Occurs when a change is made to commit, branch, Git repository, or build fields on the image’s configuration file and you run pb image apply.
     COMMIT: Occurs when new source code is committed to a branch or tag build service is monitoring for changes.
     BUILDER: Occurs when new buildpack versions are made available through an updated builder image.
+```
+
+<a name="4"></a>
+## Install a Custom Cluster Builder in the Build Service
+
+#### Create a Store resource
+The Store provides a collection of buildpacks that can be utilized by Builders. Buildpacks are distributed and added to the store in buildpackages which are docker images.
+
+Build Service ships with curated collection of Tanzu buildpacks for Java, Nodejs, Python, go, PHP, httpd, and Dotnet. It is important to keep these buildpacks up-to-date. Updates to these buildpacks are provided on the Tanzu Network Build Service Dependency page.
+```yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Store
+metadata:
+  name: todos-demo-store
+spec:
+  sources:
+  - image: gcr.io/paketo-buildpacks/adopt-openjdk
+  - image: gcr.io/paketo-buildpacks/gradle
+  - image: gcr.io/paketo-buildpacks/maven
+  - image: gcr.io/paketo-buildpacks/executable-jar
+  - image: gcr.io/paketo-buildpacks/apache-tomcat
+  - image: gcr.io/paketo-buildpacks/spring-boot
+  - image: gcr.io/paketo-buildpacks/dist-zip
+  ```
+
+Create the store as a Kubernetes resources and validate the creation 
+```shell
+> kubectl apply -f todos-k8s/tbs-store.yaml
+store.experimental.kpack.pivotal.io/todos-demo-store created
+
+> kubectl get store
+NAME                  READY
+build-service-store   True <-- store has been created
+todos-demo-store      True
+
+> pb store list
+```
+
+#### Create a Stack resource
+The Stack provides the build and run images for the Cloud Native Buildpack stack that will be used in a builder.
+
+Build Service ships with the org.cloudfoundry.stacks.cflinuxfs3 stack. Updates to this stack are provided on the Tanzu Network Build Service Dependency page.
+
+```yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Stack
+metadata:
+  name: base-cnb
+spec:
+  id: "io.buildpacks.stacks.bionic"
+  buildImage:
+    image: "gcr.io/paketo-buildpacks/build:base-cnb"
+  runImage:
+    image: "gcr.io/paketo-buildpacks/run:base-cnb"
+```
+
+Create the stack as a Kubernetes resources and validate the creation in Kubernetes and the Build Service:
+```shell
+> kubectl apply -f todos-k8s/tbs-stack.yaml
+stack.experimental.kpack.pivotal.io/bionic-stack created
+
+> kubectl get stack
+NAME                  READY
+base-cnb              True
+build-service-stack   True
+
+> pb stack status
+Stack ID:    org.cloudfoundry.stacks.cflinuxfs3
+Run Image:   docker.io/triathlonguy/tbs-dependencies-run-fa566eed03f50368e2ff40858f61b6d5@sha256:e64856ed89a096486c9bce1590414ccb7d81542bbf56dc68e5477cf09abb3523
+Build Image: docker.io/triathlonguy/tbs-dependencies-build-adb6d35d10815f4cc483514bca657e8c@sha256:111ab5e7ab965dc43d839dbc02413f2fcfac784b407d8b4808d9c905080b8d65
+```
+
+#### Create a Custom Cluster Builder resource
+A builder references the stack and buildpacks that are used in the process of building source code. They “provide” the buildpacks that run against the application and the OS images upon which the application is built and run.
+
+```yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: CustomClusterBuilder
+metadata:
+  name: todos-demo-cluster-builder
+spec:
+  tag: triathlonguy/custom-builder
+  stack: base-cnb
+  store: todos-demo-store
+  serviceAccountRef:
+    name: ccb-service-account
+    namespace: build-service
+  order:
+  - group:
+    - id: paketo-buildpacks/adopt-openjdk
+    - id: paketo-buildpacks/gradle
+      optional: true
+    - id: paketo-buildpacks/maven
+      optional: true
+    - id: paketo-buildpacks/executable-jar
+      optional: true
+    - id: paketo-buildpacks/apache-tomcat
+      optional: true
+    - id: paketo-buildpacks/spring-boot
+      optional: true
+    - id: paketo-buildpacks/dist-zip
+      optional: true
+```
+
+Create the Custom Cluster Builder resource and validate the creation in Kubernetes and the Build Service:
+```shell
+> kubectl apply -f todos-k8s/tbs-custom-cluster-builder.yaml
+customclusterbuilder.experimental.kpack.pivotal.io/todos-demo-cluster-builder created
+
+> kubectl get ccb
+NAME                         LATESTIMAGE                                                                                            READY
+default                      triathlonguy/default-builder@sha256:fd01fef73092e1d71342e4802d112b43a0b26e73a721d73a3c11ae52d6d1cbe8   True
+todos-demo-cluster-builder   triathlonguy/custom-builder@sha256:1ddc46d180eca10bcd40bfe4fd9ec39126371e2f831e599de2e0459a026c6a92    True
+
+> pb builder list
+Cluster Builders
+----------------
+default
+todos-demo-cluster-builder
+```
+
+<a name="5"></a>
+## Build repositories with custom builders
+
+Images provide a configuration for build service to build and maintain a docker image utilizing Tanzu Buildpacks and custom Cloud Native Buildpacks.
+
+Build Service will monitor the inputs to the image configuration to rebuild the image when the underlying source or buildpacks have changed.
+
+
+Image definitions allow you to specify the source repository and it's respective branch, as well as any environment paramters of choice.
+
+```yaml
+# Demo project - Master branch
+source:
+  git:
+    url: https://github.com/ddobrin/cnb-springboot 
+    revision: master
+image:
+  tag: triathlonguy/cnb-demo:master
+builder:
+  name: todos-demo-cluster-builder
+  kind: CustomClusterBuilder  
+  scope: Cluster
+
+# Demo project - develop branch
+source:
+  git:
+    url: https://github.com/ddobrin/cnb-springboot 
+    revision: develop
+image:
+  tag: triathlonguy/cnb-demo:develop
+builder:
+  name: todos-demo-cluster-builder
+  kind: CustomClusterBuilder  
+  scope: Cluster
+
+# Demo project - Release branch rel-1.0.0
+source:
+  git:
+    url: https://github.com/ddobrin/cnb-springboot 
+    revision: rel-1.0.0
+image:
+  tag: triathlonguy/cnb-demo:rel-1.0.0
+builder:
+  name: todos-demo-cluster-builder
+  kind: CustomClusterBuilder  
+  scope: Cluster
+```
+
+Images are added to the Build Service using the ```pb CLI```:
+```shell
+> pb image add -f cnb-demo-config-master.yml
+> pb image add -f cnb-demo-config-develop.yml
+> > pb image add -f cnb-demo-config-rel-1.0.0.yml
+
+# Validate that the image has been created
+> pb image list
+Project: cnb-demo
+
+Images
+------
+index.docker.io/triathlonguy/cnb-demo:master
+index.docker.io/triathlonguy/cnb-demo:develop
+index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
 ```

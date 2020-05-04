@@ -1,0 +1,10 @@
+source:
+  git:
+    url: https://github.com/ddobrin/cnb-springboot 
+    revision: master
+image:
+  tag: triathlonguy/cnb-demo:master
+builder:
+  name: todos-demo-cluster-builder
+  kind: CustomClusterBuilder  
+  scope: Cluster
