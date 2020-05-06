@@ -37,6 +37,9 @@ Simply put, three things:
 #### C. [The cloud-native patterns](/todos-docs/patterns.md)
 
 1. Application lifecycle
+    - 1.1 Blue-green deployments
+    - 1.2 Canary deployments
+    - 1.3 Rolling updates
 2. Observability
 3. Security
 4. Fronting services

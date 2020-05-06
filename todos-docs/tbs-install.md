@@ -1,16 +1,20 @@
 # Tanzu Build Service - installation on any K8s - local env
 
-Setup
+### Setup
 * [Pre-requisites](#1)
 
-Default Builder
+### Default Builder
 
-* [Install Tanzu Build Service - default uses a Default Builder](#2)
-* [Create a project and build repositories with the Default Builder](#3)
+* [Install Tanzu Build Service - the default install uses a Default Builder](#2)
+* [Create a Project and build repositories with the Default Builder](#3)
+* [Update the Build Service Stack from the VMware Tanzu Network under Build Service Dependencies](#6)
 
-Custom Builders
+### Custom Builders
 * [Install a Custom Cluster Builder in the Build Service](#4)
-* [Build repositories with custom builders](#5)
+* [Build repositories with Custom Builders](#5)
+* [Automatic build updates with buildpack changes](#7)
+* [Updating Store, Stack and Custom Builder resources for an Image](#8)
+
 
 ---
 <a name="1"></a>
@@ -525,7 +529,7 @@ Images are added to the Build Service using the ```pb CLI```:
 ```shell
 > pb image add -f cnb-demo-config-master.yml
 > pb image add -f cnb-demo-config-develop.yml
-> > pb image add -f cnb-demo-config-rel-1.0.0.yml
+> pb image add -f cnb-demo-config-rel-1.0.0.yml
 
 # Validate that the image has been created
 > pb image list
@@ -537,3 +541,217 @@ index.docker.io/triathlonguy/cnb-demo:master
 index.docker.io/triathlonguy/cnb-demo:develop
 index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
 ```
+
+<a name="7"></a>
+## Automatic build updates with buildpack changes
+
+The list of configured images:
+```shell
+> pb image list
+Project: cnb-demo
+
+Images
+------
+index.docker.io/triathlonguy/cnb-demo:master
+index.docker.io/triathlonguy/cnb-demo:develop
+index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
+```
+
+The list of builders registered with the Tanzu Build Service
+```shell
+> pb builder list
+Cluster Builders
+----------------
+default                     <-- the default builder, from the original install
+todos-demo-cluster-builder  <-- the custom cluter builder, configured subsequently in the Build Service
+```
+
+Inspecting the Custom Cluster Builder, we can observe the components, including name, stack and buildpack in use:
+```yaml
+> kubectl get ccb todos-demo-cluster-builder -o yaml
+
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: CustomClusterBuilder
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"experimental.kpack.pivotal.io/v1alpha1","kind":"CustomClusterBuilder","metadata":{"annotations":{},"name":"todos-demo-cluster-builder"},"spec":{"order":[{"group":[{"id":"paketo-buildpacks/adopt-openjdk"},{"id":"paketo-buildpacks/gradle","optional":true},{"id":"paketo-buildpacks/maven","optional":true},{"id":"paketo-buildpacks/executable-jar","optional":true},{"id":"paketo-buildpacks/apache-tomcat","optional":true},{"id":"paketo-buildpacks/spring-boot","optional":true},{"id":"paketo-buildpacks/dist-zip","optional":true}]}],"serviceAccountRef":{"name":"ccb-service-account","namespace":"build-service"},"stack":"base-cnb","store":"todos-demo-store","tag":"triathlonguy/custom-builder"}}
+  creationTimestamp: "2020-05-01T18:31:29Z"
+  generation: 1
+  
+  # The name of the custom cluster builder configured in the CustomClusterBuilder resource
+  name: todos-demo-cluster-builder    
+  resourceVersion: "2564491"
+  selfLink: /apis/experimental.kpack.pivotal.io/v1alpha1/customclusterbuilders/todos-demo-cluster-builder
+  uid: a0cdadfa-02b1-469c-a397-3a837c8b4bc1
+spec:
+  order:
+  - group:
+    - id: paketo-buildpacks/adopt-openjdk
+    - id: paketo-buildpacks/gradle
+      optional: true
+    - id: paketo-buildpacks/maven
+      optional: true
+    - id: paketo-buildpacks/executable-jar
+      optional: true
+    - id: paketo-buildpacks/apache-tomcat
+      optional: true
+    - id: paketo-buildpacks/spring-boot
+      optional: true
+    - id: paketo-buildpacks/dist-zip
+      optional: true
+  serviceAccountRef:
+    name: ccb-service-account
+    namespace: build-service
+  stack: base-cnb
+  store: todos-demo-store
+  tag: triathlonguy/custom-builder
+status:
+  builderMetadata:
+  - id: paketo-buildpacks/adopt-openjdk
+    version: 2.3.1
+  - id: paketo-buildpacks/apache-tomcat
+    version: 1.1.2
+  - id: paketo-buildpacks/maven
+    version: 1.2.1
+  - id: paketo-buildpacks/gradle
+    version: 1.1.2
+  - id: paketo-buildpacks/spring-boot
+    version: 1.5.2
+  - id: paketo-buildpacks/executable-jar
+    version: 1.2.2
+  - id: paketo-buildpacks/dist-zip
+    version: 1.2.2
+  conditions:
+  - lastTransitionTime: "2020-05-06T13:55:47Z"
+    status: "True"
+    type: Ready
+  latestImage: triathlonguy/custom-builder@sha256:0c4effcf9d3c567a54f8eb500db47246a1e1f3eb34e48f6196d1547019e43ef0
+  observedGeneration: 1
+
+  # The stack in use for this image
+  stack:
+    # The Stack ID
+    id: io.buildpacks.stacks.bionic
+
+    # The buildpoack and SHA value of the respective buildpack
+    runImage: gcr.io/paketo-buildpacks/run@sha256:d70bf0fe11d84277997c4a7da94b2867a90d6c0f55add4e19b7c565d5087206f
+
+```
+
+The image using the CustomClusterBuilder has been built, from the ```rel-1.0.0 branch``` of the repository and all built images can be listed:
+```shell
+>pb image builds index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
+Build    Status     Started Time           Finished Time          Reason        Digest
+-----    ------     ------------           -------------          ------        ------
+    1    SUCCESS    2020-05-01 15:25:01    2020-05-01 15:29:12    CONFIG        9fd3e63f1ec036d64a95cfe50d7c0ef612c2bc3bc3b8aad7c4cadda0a309ccf4
+    2    SUCCESS    2020-05-04 15:45:38    2020-05-04 15:45:57    STACK         b8617622688283ad7a2513dd3b6235960fd227c24cdb1f9541e2251fdd662f30
+    3    SUCCESS    2020-05-05 09:54:12    2020-05-05 09:56:14    BUILDPACK     bdabd4926bc72845eed075798a3ecb6ab81486c278d6ce02ec88621f6f7f180b
+    4    SUCCESS    2020-05-06 09:55:47    2020-05-06 09:58:04    BUILDPACK+    ee016d5381f4e6b34bbfbeac1f63cfe3454b6c302b430dab1bba227ea5216494
+```
+
+Let's inspect the builds:
+
+The original image has been configured at build time to use the ```base``` stack image in Paketo buildpacks ```gcr.io/paketo-buildpacks```, which can be found in [Paketo Buildpacks](https://github.com/paketo-buildpacks/stacks):
+
+The Java version in use is ```paketo-buildpacks/adopt-openjdk version 2.2.1```, which can be found in the [Paketo AdoptOpenJDK Buildpack](https://github.com/paketo-buildpacks/adopt-openjdk) with [Git Tag 2.2.1](https://github.com/paketo-buildpacks/adopt-openjdk/tree/v2.2.1).
+
+```shell
+> pb image build index.docker.io/triathlonguy/cnb-demo:rel-1.0.0 -b 1
+------------------
+Retrieving information for image "index.docker.io/triathlonguy/cnb-demo:rel-1.0.0" - build 1
+------------------
+STATUS
+     Status:     SUCCESS
+     Reasons:    Config
+     Image:      index.docker.io/triathlonguy/cnb-demo@sha256:9fd3e63f1ec036d64a95cfe50d7c0ef612c2bc3bc3b8aad7c4cadda0a309ccf4
+------------------
+BUILD DETAILS
+     Run Image:  gcr.io/paketo-buildpacks/run@sha256:fd87df6a892262c952559a164b8e2ad1be7655021ad50d520085a19a082cd379
+     Builder:    triathlonguy/custom-builder@sha256:1ddc46d180eca10bcd40bfe4fd9ec39126371e2f831e599de2e0459a026c6a92
+
+     Source:
+         Git:        https://github.com/ddobrin/cnb-springboot
+         Revision:   9fb37040ef7fb7fe8ce0eb0f7a08ebcf82ce7f35
+     Buildpacks: 
+         Id:         paketo-buildpacks/adopt-openjdk
+         Version:    2.2.1
+
+         Id:         paketo-buildpacks/maven
+         Version:    1.2.0
+
+         Id:         paketo-buildpacks/executable-jar
+         Version:    1.2.1
+
+         Id:         paketo-buildpacks/apache-tomcat
+         Version:    1.1.1
+
+         Id:         paketo-buildpacks/spring-boot
+         Version:    1.5.1
+
+         Id:         paketo-buildpacks/dist-zip
+         Version:    1.2.1
+
+------------------
+```
+
+The Tanzu Build Service is tracking any update to the AdoptOpenJDK buildpack and, with any change, build automatically the configured images.
+
+For this example, let's analyze the latest buildpack update at the time of this writing: version 2.3.1, found at [Git Tag 2.3.1](https://github.com/paketo-buildpacks/adopt-openjdk/tree/v2.3.1)
+
+From the CLI, we have found that the latest build has Build #4:
+```shell
+> pb image builds index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
+Build    Status     Started Time           Finished Time          Reason        Digest
+-----    ------     ------------           -------------          ------        ------
+...
+    4    SUCCESS    2020-05-06 09:55:47    2020-05-06 09:58:04    BUILDPACK+    ee016d5381f4e6b34bbfbeac1f63cfe3454b6c302b430dab1bba227ea5216494
+```
+
+Let's inspect now the image with Build #4 and vaslidate that the AdoptOpenJDK image is 2.3.1:
+```shell
+> pb image build index.docker.io/triathlonguy/cnb-demo:rel-1.0.0 -b 4
+------------------
+Retrieving information for image "index.docker.io/triathlonguy/cnb-demo:rel-1.0.0" - build 4
+------------------
+STATUS
+     Status:     SUCCESS
+     Reasons:    Buildpack, Stack
+     Image:      index.docker.io/triathlonguy/cnb-demo@sha256:ee016d5381f4e6b34bbfbeac1f63cfe3454b6c302b430dab1bba227ea5216494
+------------------
+BUILD DETAILS
+     Run Image:  gcr.io/paketo-buildpacks/run@sha256:d70bf0fe11d84277997c4a7da94b2867a90d6c0f55add4e19b7c565d5087206f
+     Builder:    triathlonguy/custom-builder@sha256:0c4effcf9d3c567a54f8eb500db47246a1e1f3eb34e48f6196d1547019e43ef0
+
+     Source:
+         Git:        https://github.com/ddobrin/cnb-springboot
+         Revision:   9fb37040ef7fb7fe8ce0eb0f7a08ebcf82ce7f35
+     Buildpacks: 
+         # The image is now at the expected version 2.3.1
+         Id:         paketo-buildpacks/adopt-openjdk
+         Version:    2.3.1
+
+         Id:         paketo-buildpacks/maven
+         Version:    1.2.1
+
+         Id:         paketo-buildpacks/executable-jar
+         Version:    1.2.2
+
+         Id:         paketo-buildpacks/apache-tomcat
+         Version:    1.1.2
+
+         Id:         paketo-buildpacks/spring-boot
+         Version:    1.5.2
+
+         Id:         paketo-buildpacks/dist-zip
+         Version:    1.2.2
+
+------------------
+```
+
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/ccb-buildpack-update.png "Buildpack Updates")
+
+**Note:** The builds have been executed automatically and a new images can be found in Dockerhub, whenever the Buildpack has changed, from the intial build with version (2.2.1) to build #3 with image (2.3.0) and finally with Build #4 with image (2.3.1).
+
+<a name="8"></a>
+## Updating Store, Stack and Custom Builder resources for an Image
