@@ -1,23 +1,24 @@
 # Tanzu Build Service - installation on any K8s - local env
 
-### Setup
+### A. Setup
 * [Pre-requisites](#1)
 
-### Default Builder
+### B. Default Builder
 
-* [Install Tanzu Build Service - the default install uses a Default Builder](#2)
-* [Create a Project and build repositories with the Default Builder](#3)
-* [Update the Build Service Stack from the VMware Tanzu Network under Build Service Dependencies](#6)
+* [INSTALL -  Tanzu Build Service - with a default install and Default Builder](#2)
+* [USE -  Create a Project and build repositories automatically with the Default Builder](#3)
+* [MANAGE -  Update the Build Service Stack from the VMware Tanzu Network under Build Service Dependencies](#6)
 
-### Custom Builders
-* [Install a Custom Cluster Builder in the Build Service](#4)
-* [Build repositories with Custom Builders](#5)
-* [Automatic build updates with buildpack changes](#7)
-* [Updating Store, Stack and Custom Builder resources for an Image](#8)
-
-
+### C. Custom Builders
+* [CREATE -  Custom Cluster Builder in the Build Service](#4)
+* [USE -  Build repositories with Custom Builders](#5)
+* [AUTOMATIC UPDATES -  Automatic build updates when buildpacks change](#7)
+* [MANAGE -  Updating Store, Stack and Custom Builder resources for an Image](#8)
 ---
+
+
 <a name="1"></a>
+# Setup 
 ## Prerequisites
 * Install [Docker Desktop](https://hub.docker.com/editions/community/docker-ce-desktop-mac) : You will use this to create your local Kubernetes cluster, as well as to run your containers built by Tanzu Build Service.
 * Create a [Docker Hub account](https://hub.docker.com): This is where Tanzu Build Service will push your built images for you to pull down and run. It is also where you will push your Tanzu Build Service build images during the install process.
@@ -66,7 +67,8 @@ credentials:
 ```
 
 <a name="2"></a>
-## Install Tanzu Build Service - default uses a Default Builder
+# B. Default Builder
+## INSTALL -  Tanzu Build Service - with a default install and Default Builder
 ```shell
 > duffle install tbs-deploy-local -c credentials --set kubernetes_env=docker-desktop --set docker_registry=index.docker.io --set docker_repository='triathlonguy'  --set registry_username='triathlonguy'  --set registry_password='ship2020pa'  --set custom_builder_image="triathlonguy/default-builder" -f /tmp/build-service-0.1.0.tgz  -m /tmp/relocated.json -v
 
@@ -108,7 +110,7 @@ CLI Version: 0.1.0 (e9b0e13a)
 ```
 
 <a name="3"></a>
-## Create a project and build repositories with the Default Builder
+## USE -  Create a Project and build repositories automatically with the Default Builder
 
 #### The Demo app - CNB SpringBoot demo 
 This document uses a simple Spring demo application for cloud-native buildpacks, with a simple UI for illustrative purposes.
@@ -347,7 +349,7 @@ Build    Status     Started Time           Finished Time          Reason    Dige
     1    SUCCESS    2020-04-28 10:27:53    2020-04-28 10:30:39    CONFIG    734111f87c528afbc588870c8de6b442bbe4434f3c157d43fedd96484d205c03
     2    SUCCESS    2020-04-28 10:52:41    2020-04-28 10:53:40    COMMIT    5f112339d2687d56dda841e886ce6576a030cdcd5d8c10464d76d7e7d1dae869
 
-dandobrin@vmwin-008:/tmp:>pb image builds triathlonguy/cnb-demo:master
+> pb image builds triathlonguy/cnb-demo:master
 Build    Status     Started Time           Finished Time          Reason    Digest
 -----    ------     ------------           -------------          ------    ------
     1    SUCCESS    2020-04-28 10:20:14    2020-04-28 10:22:58    CONFIG    118895f403f12bbb38f05780a45b3a6846797a7a74422012d85d6e83f6db696f
@@ -359,7 +361,8 @@ Build    Status     Started Time           Finished Time          Reason    Dige
 ```
 
 <a name="4"></a>
-## Install a Custom Cluster Builder in the Build Service
+# C. Custom Builders
+## CREATE -  Custom Cluster Builder in the Build Service
 
 #### Create a Store resource
 The Store provides a collection of buildpacks that can be utilized by Builders. Buildpacks are distributed and added to the store in buildpackages which are docker images.
@@ -478,7 +481,7 @@ todos-demo-cluster-builder
 ```
 
 <a name="5"></a>
-## Build repositories with custom builders
+## USE -  Build repositories with Custom Builders
 
 Images provide a configuration for build service to build and maintain a docker image utilizing Tanzu Buildpacks and custom Cloud Native Buildpacks.
 
@@ -543,7 +546,7 @@ index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
 ```
 
 <a name="7"></a>
-## Automatic build updates with buildpack changes
+## AUTOMATIC UPDATES -  Automatic build updates when buildpacks change
 
 The list of configured images:
 ```shell
@@ -754,4 +757,45 @@ BUILD DETAILS
 **Note:** The builds have been executed automatically and a new images can be found in Dockerhub, whenever the Buildpack has changed, from the intial build with version (2.2.1) to build #3 with image (2.3.0) and finally with Build #4 with image (2.3.1).
 
 <a name="8"></a>
-## Updating Store, Stack and Custom Builder resources for an Image
+## MANAGE -  Updating Store, Stack and Custom Builder resources for an Image
+
+The steps provided in this chapter can be used to:
+- update an existing stack, store or custom cluster builder
+- create additional ones, for parallel or regression testing of a source code repository
+
+As an example, we wish to show how we can update the buildpack to use [Paketo BellSoft Liberica cloud-native Java buildpack](https://github.com/paketo-buildpacks/bellsoft-liberica): ```gcr.io/paketo-buildpacks/bellsoft-liberica```
+
+We modify the store definition as follows:
+```yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Store
+metadata:
+  name: todos-demo-store-bellsoft
+spec:
+  sources:
+  # Removed - - image: gcr.io/paketo-buildpacks/adopt-openjdk
+  # Add
+  - image: gcr.io/paketo-buildpacks/bellsoft-liberica
+  - image: gcr.io/paketo-buildpacks/gradle
+  - image: gcr.io/paketo-buildpacks/maven
+  - image: gcr.io/paketo-buildpacks/executable-jar
+  - image: gcr.io/paketo-buildpacks/apache-tomcat
+  - image: gcr.io/paketo-buildpacks/spring-boot
+  - image: gcr.io/paketo-buildpacks/dist-zip
+```
+
+We give the store new metadata, to indicate in the new configuration that we are using a new buildpack: ```todos-demo-store-bellsoft```. While we can update the previous Store YAML config file, we choose to give it a new resource, to allow for easier testing.
+```shell
+> kubectl apply -f todos-k8s/tbs-store-bellsoft.yaml 
+store.experimental.kpack.pivotal.io/todos-demo-store-bellsoft created
+
+# validate the Store resources created in K8s
+> kubectl get store
+NAME                        READY
+build-service-store         True
+todos-demo-store            True
+todos-demo-store-bellsoft   True
+```
+
+
+

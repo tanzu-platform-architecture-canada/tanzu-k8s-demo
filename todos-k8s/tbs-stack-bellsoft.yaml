@@ -1,0 +1,10 @@
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Stack
+metadata:
+  name: bellsoft-liberica
+spec:
+  id: "io.buildpacks.stacks.bionic"
+  buildImage:
+    image: "gcr.io/paketo-buildpacks/bellsoft-liberica"
+  runImage:
+    image: "gcr.io/paketo-buildpacks/bellsoft-liberica"
