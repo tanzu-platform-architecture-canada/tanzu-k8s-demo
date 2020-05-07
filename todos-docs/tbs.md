@@ -1,9 +1,8 @@
-# Tanzu build Service
+# Open-source: Cloud-native Buildpacks and Kpack
 
-1. Build multi-module repositories from source code
-    1. [Building with ```cloud-native buildpacks```](#1)
-    2. [Building with ```kpacks```](#2)
-2. Build Service use-cases
+## Build multi-module repositories from source code:
+1. [Building with ```cloud-native buildpacks```](#1)
+2. [Building with ```kpacks```](#2)
 
 <a name="1"></a>
 ## Building with ```cloud-native buildpacks```
