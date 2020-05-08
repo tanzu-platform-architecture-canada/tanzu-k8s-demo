@@ -1,0 +1,500 @@
+ 1496  cd ..
+ 1497  pack build triathlonguy/todos-api --publish --path . --builder cloudfoundry/cnb:bionic --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1498  pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/bellsoft-liberica --env BP_BUILT_MODULE=todos-api --env BP_JAVA_VERSION=8.* --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1499  pack build triathlonguy/todos-api --publish --path . --builder paketo-buildpacks/bellsoft-liberica --env BP_BUILT_MODULE=todos-api --env BP_JAVA_VERSION=8.* --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1500  pack build triathlonguy/todos-api --publish --path . --builder cloudfoundry/cnb:bionic --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1501  pack build triathlonguy/todos-api --publish --path . --builder paketo-buildpacks/bellsoft-liberica --env BP_BUILT_MODULE=todos-api --env BP_JAVA_VERSION=8.* --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1502  pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/bellsoft-liberica --env BP_BUILT_MODULE=todos-api --env BP_JAVA_VERSION=8.* --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1503  ls
+ 1504  pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1505  cd todos-k8s/
+ 1506  ls
+ 1507  k apply -f cnb-builder.yaml 
+ 1508  k get clusterbuilders.build.pivotal.io
+ 1509  k apply -f app-source-todos-api.yaml
+ 1510  k delete image todos-api
+ 1511  k get clusterbuilders
+ 1512  k get pod
+ 1513  ls
+ 1514  k apply -f app-source-todos-api.yaml 
+ 1515  cat cnb-builder.yaml 
+ 1516  k get clusterbuilders.build.pivotal.io 
+ 1517  k get pod
+ 1518  pack suggest-builders
+ 1519  k get clusterbuilder
+ 1520  k get clusterbuilder
+ 1521  pwd
+ 1522  pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1523  pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1524  pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1525  pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1526  pwd
+ 1527  pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1528  git status
+ 1529  diff github-creds.yaml
+ 1530  cd ..
+ 1531  git status
+ 1532  git add *
+ 1533  git commit -m"updated to Paketo buildpacks"
+ 1534  git push origin master
+ 1535  pack build triathlonguy/todos-api --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-api --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-api -am"
+ 1536  k apply -f todos-k8s/app-source-todos-api.yaml 
+ 1537  pack build triathlonguy/todos-edge --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-edge --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-edge -am"
+ 1538  k delete -f todos-k8s/cnb-builder.yaml 
+ 1539  k apply  -f todos-k8s/cnb-builder.yaml 
+ 1540  pack build triathlonguy/todos-webui --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-webui --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-webui -am"
+ 1541  pack build triathlonguy/todos-mysql --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_JAVA_VERSION=8.* --env BP_BUILT_MODULE=todos-mysql --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-mysql -am"
+ 1542  pack build triathlonguy/todos-redis --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-redis --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-redis -am"
+ 1543  pack build triathlonguy/todos-mysql --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_JAVA_VERSION=8 --env BP_BUILT_MODULE=todos-mysql --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-mysql -am"
+ 1544  pack build triathlonguy/todos-mysql --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_BUILT_MODULE=todos-mysql --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-mysql -am"
+ 1545  pack build triathlonguy/todos-mysql --publish --path . --builder gcr.io/paketo-buildpacks/builder:base $BP_JAVA_VERSION=8.* --env BP_BUILT_MODULE=todos-mysql --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-mysql -am"
+ 1546  pack build triathlonguy/todos-mysql --publish --path . --builder gcr.io/paketo-buildpacks/builder:base --env BP_JAVA_VERSION="8.*" --env BP_BUILT_MODULE=todos-mysql --env BP_BUILD_ARGUMENTS="-Dmaven.test.skip=false package -pl todos-mysql -am"
+ 1547  git status
+ 1548  ls
+ 1549  history
+ 1550  pwd
+ 1551  k apply -f todos-k8s/app-source-todos-api.yaml 
+ 1552  k get pod
+ 1553  k get pod
+ 1554  k get pod
+ 1555  k apply -f todos-k8s/app-source-todos-webui.yaml 
+ 1556  k delete image todos-webui
+ 1557  k apply -f todos-k8s/app-source-todos-webui.yaml 
+ 1558  pwd
+ 1559  git status
+ 1560  git add *
+ 1561  git commit -m"Buildpacks swithed to Paketo - working with 2.3.0+ buildpacks"
+ 1562  git push origin master
+ 1563  git statis
+ 1564  git status
+ 1565  git commit -a -m"clean up tbs docs"
+ 1566  git push origin master
+ 1567  export PS1='\u@\h:\w:>'
+ 1568  cd ../../apptx/modernization-cookbook-master-internal/
+ 1569  git pull
+ 1570  cd -
+ 1571  cat ~/.kube/config
+ 1572  k cluster-info
+ 1573  k cluster-info | grep -i docker-desktop
+ 1574  k cluster-info | grep -i name
+ 1575  duffle
+ 1576  ls
+ 1577  cd ~
+ 1578  ls -lart
+ 1579  cd -
+ 1580  ls /lib
+ 1581  ls ~/lib
+ 1582  cd ~
+ 1583  ls
+ 1584  cd Library/
+ 1585  ls
+ 1586  cd ~/work/demo/tanzu-k8s-demo
+ 1587  cd ..
+ 1588  sl
+ 1589  ls
+ 1590  ls -lart
+ 1591  chmod +x get-docker-images.sh
+ 1592  ./get-docker-images.sh 
+ 1593  ./get-docker-images.sh 
+ 1594  ./get-docker-images.sh 
+ 1595  docker 
+ 1596  gcloud config
+ 1597  gcloud config list
+ 1598  k images
+ 1599  gcloud container images list
+ 1600  gcloud container images list --help
+ 1601  gcloud container images list --repository gcr.io/pa-ddobrin/build-service
+ 1602  k get ns
+ 1603  ls
+ 1604  cd cnb-springboot/
+ 1605  ls
+ 1606  git pull
+ 1607  git fetch upstream
+ 1608  git remote add upstream git@github.com:alexandreroman/cnb-springboot.git
+ 1609  git fetch upstream
+ 1610  git branch
+ 1611    git merge upstream/master
+ 1612  git push origin master
+ 1613  git fetch upstream
+ 1614  git checkout master
+ 1615    git merge upstream/master
+ 1616  git push origin master
+ 1617  cd ..
+ 1618  cd ../demo3party/
+ 1619  ls
+ 1620  git clone git@github.com:alexandreroman/cnb-springboot.git
+ 1621  cd cnb-springboot/
+ 1622  ;s
+ 1623  ls
+ 1624  pack set-default-builder gcr.io/paketo-buildpacks/builder:base
+ 1625  pack suggest-builders
+ 1626  docker images | grep -i cnb
+ 1627  pack build triathlonguy/cnb-springboot:latest
+ 1628  docker images
+ 1629  docker images | grep -i cnb
+ 1630  java -version
+ 1631  cd ../demo
+ 1632  cd ../demo/
+ 1633  cd ../../demo/
+ 1634  ls
+ 1635  rm -rf cnb-springboot/
+ 1636  ls
+ 1637  git clone git@github.com:ddobrin/cnb-springboot.git
+ 1638  git fetch upstream
+ 1639  cd cnb-
+ 1640  cd cnb-springboot/
+ 1641  git pull
+ 1642  git fetch upstream
+ 1643  git remote add upstream git@github.com:alexandreroman/cnb-springboot.git
+ 1644  git fetch upstream
+ 1645  git checkout master
+ 1646  fit merge upstream/master
+ 1647  git merge upstream/master
+ 1648  git push origin master
+ 1649  pack build triathlonguy/cnb-springboot:latest
+ 1650  docker images | grep -i cnb
+ 1651  k get ns
+ 1652  k get --all -n todo-demo
+ 1653  k get pod -n todo-demo
+ 1654  docker images
+ 1655  docker images | grep -i images
+ 1656  pb builder -h
+ 1657  pb builder list
+ 1658  pb builder status
+ 1659  pb builder status -h
+ 1660  pb builder status docker-desktop
+ 1661  k get pod -n todo-demo
+ 1662  k get images
+ 1663  k get images
+ 1664  k get customclusterbuilders.experimental.kpack.pivotal.io
+ 1665  pb builder status default --cluster
+ 1666  k edit ccb
+ 1667  k edit ccb
+ 1668  ls
+ 1669  k edit ccb
+ 1670  k describe ccb
+ 1671  k export
+ 1672  k get -h
+ 1673  k get ccb -h
+ 1674  history
+ 1675  ls
+ 1676  cd ../../tools/kpack
+ 1677  ls
+ 1678  k delete -f release-0.0.8.yaml 
+ 1679  k delete secret default-token-5xv5x 
+ 1680  k delete secret default-token-5xv5x -n build-service
+ 1681  k delete secret private-registry-secret                           -n build-service
+ 1682  k delete secret secret-syncer-service-account-token-hf9vt   -n build-service
+ 1683  k delete secret  smart-warmer-service-account-token-hm8x5     -n build-service
+ 1684  l delete secret  webhook-server-tls  -n build-service
+ 1685  k get sa -A
+ 1686  k delete sa ccb-service-account -n build-service
+ 1687  k delete sa default -n build-service
+ 1688  k -n build-service delete sa  secret-syncer-service-account 
+ 1689  k -n build-service delete sa  smart-warmer-service-account
+ 1690  k delete clusterrole
+ 1691  k delete clusterrole build-service-secret-syncer-role 
+ 1692  k delete clusterrole build-service-smart-warmer-role  pb-admin-role 
+ 1693  k delete clusterrole pb-authenticated-role  pb-user-role  
+ 1694  k delete ns build-service
+ 1695  k delete clusterrole/projects-projects-operator-manager-role clusterrole/projects-projects-operator-proxy-role
+ 1696  k delete clusterrole/projects-projects-operator-projectaccess-cluster-role rolebinding/build-service-smart-warmer-namespace-role-binding
+ 1697  k delete customresourcedefinition/projects.projects.pivotal.io
+ 1698  k delete clusterrolebinding/projects-projects-operator-clusterrole-ref-rolebinding 
+ 1699  k delete role/projects-projects-operator-leader-election-role
+ 1700  k get role
+ 1701  k get role -A
+ 1702  k delete role projects-projects-operator-leader-election-role -n project-operator
+ 1703  k delete validatingwebhookconfiguration 
+ 1704  k delete validatingwebhookconfiguration  projects-projects-operator-webhook-configuration
+ 1705  k delete clusterrolebinding build-service-secret-syncer-role-binding build-service-smart-warmer-role-binding pb-admin-role-bindings  pb-authenticated-role-binding projects-projects-operator-manager-rolebinding    projects-projects-operator-projectaccess-authenticated-cluster-rolebinding projects-projects-operator-proxy-rolebinding  
+ 1706  k delete cm build-service 
+ 1707  rm -ns project-operator 
+ 1708  rm ns project-operator 
+ 1709  k get ns
+ 1710  k delete ns todo-demo
+ 1711  k delete ns project-operator 
+ 1712  k get customresourcedefinition
+ 1713  k delete customresourcedefinition projectaccesses.projects.pivotal.io 
+ 1714  docker images
+ 1715  docker images | grep -i cnb-demo
+ 1716  docker pull triathlonguy/cnb-demo:latest
+ 1717  docker run --rm -p 8080:8080/tcp myorg/cnb-demo
+ 1718  docker images
+ 1719  docker images | grep -i cnb-demo
+ 1720  docker run --rm -p 8080:8080/tcp triathlonguy/cnb-demo
+ 1721  docker run --rm -p 8080:8080/tcp triathlonguy/cnb-demo
+ 1722  cd ../../demo
+ 1723  ls
+ 1724  cd ../demo3party/
+ 1725  ls
+ 1726  cd cnb
+ 1727  cd cnb-springboot/
+ 1728  ls
+ 1729  ls -lart
+ 1730  cat .git
+ 1731  cd .git
+ 1732  ls
+ 1733  cat config
+ 1734  cd ..
+ 1735  ls
+ 1736  cat pom.xml `
+ 1737  cat pom.xml
+ 1738  java -version
+ 1739  docker pull triathlonguy/cnb-demo:latest
+ 1740  docker run --rm -p 8080:8080/tcp triathlonguy/cnb-demo
+ 1741  git pull
+ 1742  cd ../../demo/cnb-springboot/
+ 1743  ls
+ 1744  cd .git
+ 1745  ls -lart
+ 1746  cat info
+ 1747  cd info
+ 1748  ls
+ 1749  cd ..
+ 1750  cat HEAD
+ 1751  cat config
+ 1752  docker run --rm -p 8080:8080/tcp triathlonguy/cnb-demo
+ 1753  cd ..
+ 1754  ls
+ 1755  git branch --all
+ 1756  git checkout -b develop
+ 1757  git push origin develop
+ 1758  git checkout master
+ 1759  git branch
+ 1760  git checkout - develop
+ 1761  git checkout develop
+ 1762  git status
+ 1763  git commit -a -m"trigger tbs build in develop"
+ 1764  git push origin develop
+ 1765  docker pull triathlonguy/cnb-demo:develop
+ 1766  docker run --rm -p 8080:8080/tcp triathlonguy/cnb-demo:develop
+ 1767  cd ../tanzu-k8s-demo/
+ 1768  git branch
+ 1769  git pull
+ 1770  cd -
+ 1771  cd -
+ 1772  cd todo-docs
+ 1773  ls
+ 1774  cd todos-docs/
+ 1775  cp /tmp/tbs-install.md .
+ 1776  cd ..
+ 1777  git status
+ 1778  git add *\
+ 1779  git status
+ 1780  git commit -m"Added TBS"
+ 1781  git push origin master
+ 1782  ls todos-docs
+ 1783  git status
+ 1784  git commit -a -m"fixed link"
+ 1785  git push origin master
+ 1786  java -version
+ 1787  cf ssh https://pcf-c2c-java-frontend-bold-possum-uz.cfapps.io
+ 1788  cf login
+ 1789  cf ssh https://pcf-c2c-java-frontend-bold-possum-uz.cfapps.io
+ 1790  cf ssh
+ 1791  cf ssh pcf-c2c-java-frontend
+ 1792  cf ssh pcf-c2c-java-frontend
+ 1793  git status
+ 1794  git branch
+ 1795  git fetch 
+ 1796  git branch -a
+ 1797  git checkout -b rel-1.0.0
+ 1798  git push origin rel-1.0.0 
+ 1799  git branch
+ 1800  mvn dependency:tree
+ 1801  git status
+ 1802  git status
+ 1803  git status
+ 1804  git commit -a -m"updated tbs docs"
+ 1805  git branch
+ 1806  git push origin rel-1.0.0
+ 1807  git checkout master
+ 1808  git branch -a
+ 1809  cd ../cnb-springboot/
+ 1810  git branch
+ 1811  git fetch
+ 1812  git branch -A
+ 1813  git branch -a
+ 1814  git checkout -b rel-1.0.0
+ 1815  git push origin rel-1.0.0
+ 1816  git checkout develop
+ 1817  git status
+ 1818  git checkout  rel-1.0.0
+ 1819  git status
+ 1820  git commit -a -m"changed messaging"
+ 1821  git push origin rel-1.0.0
+ 1822  cd -
+ 1823  git branch
+ 1824  git status
+ 1825  k apply -f todos-k8s/tbs-store.yaml
+ 1826  k apply -f todos-k8s/tbs-stack.yaml
+ 1827  kubectl apply -f todos-k8s/tbs-custom-cluster-builder.yaml
+ 1828  kubectl delete -f todos-k8s/tbs-custom-cluster-builder.yaml
+ 1829  kubectl apply -f todos-k8s/tbs-custom-cluster-builder.yaml
+ 1830  kubectl delete -f todos-k8s/tbs-custom-cluster-builder.yaml
+ 1831  k delete  -f todos-k8s/tbs-stack.yaml
+ 1832  k apply -f todos-k8s/tbs-stack.yaml
+ 1833  k delete  -f todos-k8s/tbs-stack.yaml
+ 1834  k apply -f todos-k8s/tbs-stack.yaml
+ 1835  k apply -f todos-k8s/tbs-stack.yaml
+ 1836  k delete  -f todos-k8s/tbs-stack.yaml
+ 1837  k apply -f todos-k8s/tbs-stack.yaml
+ 1838  k delete  -f todos-k8s/tbs-stack.yaml
+ 1839  k apply -f todos-k8s/tbs-stack.yaml
+ 1840  k delete  -f todos-k8s/tbs-stack.yaml
+ 1841  k apply -f todos-k8s/tbs-stack.yaml
+ 1842  k delete  -f todos-k8s/tbs-stack.yaml
+ 1843  k apply -f todos-k8s/tbs-stack.yaml
+ 1844  k delete  -f todos-k8s/tbs-stack.yaml
+ 1845  k delete  -f todos-k8s/tbs-stack.yaml
+ 1846  k apply -f todos-k8s/tbs-stack.yaml
+ 1847  k delete  -f todos-k8s/tbs-stack.yaml
+ 1848  k apply -f todos-k8s/tbs-stack.yaml
+ 1849  ls todos-k8s/
+ 1850* k delete  -f todos-k8s/tbs-custom-cluster-builder.yaml 
+ 1851  git status
+ 1852  git status
+ 1853  pb
+ 1854  pb image apply -f todos-k8s/tbs-image-release-branch.yaml
+ 1855  pb image apply -f todos-k8s/tbs-image-release-branch.yaml
+ 1856  pb image delete  -f todos-k8s/tbs-image-release-branch.yaml
+ 1857  pb image apply -f todos-k8s/tbs-image-release-branch.yaml
+ 1858  pwd
+ 1859  git branch
+ 1860  git status
+ 1861  history | grep run
+ 1862  git branch
+ 1863  git status
+ 1864  history | grep apply
+ 1865  git status
+ 1866  cp todos-k8s/tbs-image-release-branch.yaml todos-k8s/tbs-image-master-branch.yaml
+ 1867  git status
+ 1868  git add *
+ 1869  git commit -m"Added TBS documentation, including custom builders"
+ 1870  git push origin master
+ 1871  git pull
+ 1872  git push origin master -f
+ 1873  git status
+ 1874  git diff
+ 1875  git status
+ 1876  git add todos-docs/tbs.md
+ 1877  git branch
+ 1878  git diff todos-docs/tbs.md
+ 1879  giot diff todos-docs/tbs-install.md
+ 1880  git diff todos-docs/tbs-install.md
+ 1881  git status
+ 1882  git status
+ 1883  git add todos-docs/tbs-install.md
+ 1884  git commit -m"Added TBS documentation, including custom builders"
+ 1885  git push origin master
+ 1886  ls
+ 1887   ls
+ 1888  ls ..
+ 1889  git status
+ 1890  git branch
+ 1891  git branch -a
+ 1892  docker pull registry.pivotal.io/tbs-dependencies/iopivotaljava:v2.1.281
+ 1893  docker login
+ 1894  docker pull registry.pivotal.io/tbs-dependencies/iopivotaljava:v2.1.281
+ 1895  k get stotr
+ 1896  k get store
+ 1897  k edit store build-service-store 
+ 1898  k edit store todos-demo-store 
+ 1899  pb iamge list
+ 1900  pb image list
+ 1901  pb image -h
+ 1902  pb image builds index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
+ 1903* pb image status 
+ 1904  pb image list
+ 1905  pb image builds index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
+ 1906  pb image build
+ 1907  pb image 
+ 1908  pb image builds index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
+ 1909  pb image build index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
+ 1910  pb image build index.docker.io/triathlonguy/cnb-demo:rel-1.0.0 -b 4
+ 1911  pb image build index.docker.io/triathlonguy/cnb-demo:rel-1.0.0 -b 3
+ 1912  pb image build index.docker.io/triathlonguy/cnb-demo:rel-1.0.0 -b 2
+ 1913  pb image build index.docker.io/triathlonguy/cnb-demo:master
+ 1914  pb image list
+ 1915  pb image build      index.docker.io/triathlonguy/cnb-demo:master
+ 1916  pb image builds index.docker.io/triathlonguy/cnb-demo:master
+ 1917  pb image build      index.docker.io/triathlonguy/cnb-demo:master -b 1
+ 1918  pb image list
+ 1919  pb image builds
+ 1920  pb image builds -h
+ 1921  pb image build      index.docker.io/triathlonguy/cnb-demo:master -b 1
+ 1922  history
+ 1923  pb image build
+ 1924  pb image builds
+ 1925  pb image -h
+ 1926  pb image list
+ 1927  pb buildder list
+ 1928  pb builder list
+ 1929  pb builder 
+ 1930  pb builder get todos-demo-cluster-builder
+ 1931  pb builder get default
+ 1932  pb builder status todos-demo-cluster-builder
+ 1933  pb builder list
+ 1934  k get ccb todos-demo-cluster-builder -o yaml
+ 1935  pb builder list
+ 1936  pb image list
+ 1937  pb image builds index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
+ 1938  pb image build index.docker.io/triathlonguy/cnb-demo:rel-1.0.0 -b 4
+ 1939  pb image build index.docker.io/triathlonguy/cnb-demo:rel-1.0.0 -b 4
+ 1940  git status
+ 1941  git status
+ 1942  git add *
+ 1943  git commit -m"added CCB updates"
+ 1944  git push origin master
+ 1945  ls 
+ 1946  pwd
+ 1947  ls todos-k8s/
+ 1948  k apply -f todos-k8s/tbs-store-bellsoft.yaml 
+ 1949  k get store
+ 1950  k describe store todos-demo-store-bellsoft 
+ 1951  ls todos-k8s/
+ 1952  k apply -f todos-k8s/tbs-stack-bellsoft.yaml 
+ 1953  k get stack
+ 1954  k edit stack bellsoft-liberica 
+ 1955  k delete -f todos-k8s/tbs-stack-bellsoft.yaml 
+ 1956  git status
+ 1957  git status
+ 1958  git add *
+ 1959  git commit -a "updated tbs docs"
+ 1960  git commit -m "updated tbs docs"
+ 1961  git push origin master
+ 1962  git status
+ 1963  git commit -a -m"removed unused text"
+ 1964  git push origin master
+ 1965  k apply -f todos-k8s/tbs-stack-bellsoft.yaml 
+ 1966  k get stack
+ 1967  k edit stack bellsoft-liberica 
+ 1968  k get stack
+ 1969  k get stack
+ 1970  k get stack
+ 1971  k edit stack bellsoft-liberica 
+ 1972  k edit stack base-cnb 
+ 1973  k edit stack bellsoft-liberica 
+ 1974  k delete -f todos-k8s/tbs-stack-bellsoft.yaml 
+ 1975  k apply -f todos-k8s/tbs-stack-bellsoft.yaml 
+ 1976  k get stack
+ 1977  k get all -n build-service
+ 1978  k get ccb
+ 1979  ls todos-k8s/
+ 1980  k apply -f todos-k8s/tbs-custom-cluster-builder-bellsoft.yaml
+ 1981  k get ccb
+ 1982  k logs todos-demo-cluster-bellsoft-builder 
+ 1983  k get ccb
+ 1984  k describe ccb todos-demo-cluster-bellsoft-builder 
+ 1985  k get ccb
+ 1986  k get ccb todos-demo-cluster-bellsoft-builder  -o yaml
+ 1987  k get ccb
+ 1988  pb image list
+ 1989  pb builders list
+ 1990  pb builder list
+ 1991  k get stack
+ 1992  kubectl get ccb
+ 1993  pb image list
+ 1994  pwd
+ 1995  history > history8.05.txt

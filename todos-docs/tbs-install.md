@@ -1,13 +1,13 @@
 # Tanzu Build Service - installation on any K8s - local env
 
-### A. Setup
+### A. Tanzu Build Service Setup
 * [Pre-requisites](#1)
+* [SETUP -  Tanzu Build Service - with a Default install and Builder](#2)
 
-### B. Default Builder
+### B. Work with Default Builder
 
-* [INSTALL -  Tanzu Build Service - with a default install and Default Builder](#2)
 * [USE -  Create a Project and build repositories automatically with the Default Builder](#3)
-* [MANAGE -  Update the Build Service Stack from the VMware Tanzu Network under Build Service Dependencies](#6)
+* [MANAGE -  Update the Build Service Stack from the VMware Tanzu Network - Build Service Dependencies](#6)
 
 ### C. Custom Builders
 * [CREATE -  Custom Cluster Builder in the Build Service](#4)
@@ -15,7 +15,6 @@
 * [AUTOMATIC UPDATES -  Automatic build updates when buildpacks change](#7)
 * [MANAGE -  Updating Store, Stack and Custom Builder resources for an Image](#8)
 ---
-
 
 <a name="1"></a>
 # Setup 
@@ -67,8 +66,7 @@ credentials:
 ```
 
 <a name="2"></a>
-# B. Default Builder
-## INSTALL -  Tanzu Build Service - with a default install and Default Builder
+## SETUP -  Tanzu Build Service - with a default install and Builder
 ```shell
 > duffle install tbs-deploy-local -c credentials --set kubernetes_env=docker-desktop --set docker_registry=index.docker.io --set docker_repository='triathlonguy'  --set registry_username='triathlonguy'  --set registry_password='ship2020pa'  --set custom_builder_image="triathlonguy/default-builder" -f /tmp/build-service-0.1.0.tgz  -m /tmp/relocated.json -v
 
@@ -110,6 +108,7 @@ CLI Version: 0.1.0 (e9b0e13a)
 ```
 
 <a name="3"></a>
+# B. Default Builder
 ## USE -  Create a Project and build repositories automatically with the Default Builder
 
 #### The Demo app - CNB SpringBoot demo 
@@ -759,7 +758,7 @@ BUILD DETAILS
 <a name="8"></a>
 ## MANAGE -  Updating Store, Stack and Custom Builder resources for an Image
 
-The steps provided in this chapter can be used to:
+The steps provided in this chapter illustrate how to:
 - update an existing stack, store or custom cluster builder
 - create additional ones, for parallel or regression testing of a source code repository
 
@@ -767,10 +766,11 @@ As an example, we wish to show how we can update the buildpack to use [Paketo Be
 
 We modify the store definition as follows:
 ```yaml
+# tbs-store-bellsoft.yaml
 apiVersion: experimental.kpack.pivotal.io/v1alpha1
 kind: Store
 metadata:
-  name: todos-demo-store-bellsoft
+  name: todos-demo-store-bellsoft   # <-- the new Store name
 spec:
   sources:
   # Removed - - image: gcr.io/paketo-buildpacks/adopt-openjdk
@@ -797,5 +797,244 @@ todos-demo-store            True
 todos-demo-store-bellsoft   True
 ```
 
+We can now choose to update the existing/create a new Stack resource for using the ```Bellsoft-Liberica``` buildpack:
+```yaml
+# tbs-stack-bellsoft.yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Stack
+metadata:
+  name: bellsoft-liberica    # <-- the new Stack name
+spec:
+  id: "io.buildpacks.stacks.bionic"
+  buildImage:
+    image: "gcr.io/paketo-buildpacks/build:base-cnb"
+  runImage:
+    image: "gcr.io/paketo-buildpacks/run:base-cnb"
+```
+
+The new Stack is created using the same kubectl CLI:
+```shell
+> kubectl apply -f todos-k8s/tbs-stack-bellsoft.yaml 
+stack.experimental.kpack.pivotal.io/bellsoft-liberica created
+
+> kubectl get stack
+NAME                  READY
+base-cnb              True
+bellsoft-liberica     True
+build-service-stack   True
+```
+
+At this time, we can update/create a new Custom Cluster Builder, leveraging the ```Bellsoft-Liberica``` buildpack:
+```yaml
+# tbs-custom-cluster-builder-bellsoft.yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: CustomClusterBuilder
+metadata:
+  name: todos-demo-cluster-bellsoft-builder   # <-- the name of the new custom cluster builder
+spec:
+  tag: triathlonguy/custom-bellsoft-builder
+  stack: bellsoft-liberica   # <-- the new stack name
+  store: todos-demo-store-bellsoft   # <-- the new store name
+  serviceAccountRef:
+    name: ccb-service-account
+    namespace: build-service
+  order:
+  - group:
+    - id: paketo-buildpacks/bellsoft-liberica  # <-- the buildpack we wish to use
+    - id: paketo-buildpacks/gradle
+      optional: true
+    - id: paketo-buildpacks/maven
+      optional: true
+    - id: paketo-buildpacks/executable-jar
+      optional: true
+    - id: paketo-buildpacks/apache-tomcat
+      optional: true
+    - id: paketo-buildpacks/spring-boot
+      optional: true
+    - id: paketo-buildpacks/dist-zip
+      optional: true
+```
+
+The CustomClusterBuilder is created from the kubectl CLI:
+```shell
+> kubectl apply -f todos-k8s/tbs-custom-cluster-builder-bellsoft.yaml
+customclusterbuilder.experimental.kpack.pivotal.io/todos-demo-cluster-bellsoft-builder created
+
+> kubectl get ccb
+NAME                                  LATESTIMAGE                                                                                                    READY
+default                               triathlonguy/default-builder@sha256:fd01fef73092e1d71342e4802d112b43a0b26e73a721d73a3c11ae52d6d1cbe8           True
+todos-demo-cluster-bellsoft-builder   triathlonguy/custom-bellsoft-builder@sha256:44f4d24b0e164a3425384b5f556dbfceba584c0c326393fd94daa6a49cebd362   True
+todos-demo-cluster-builder            triathlonguy/custom-builder@sha256:85e0611700b1ee95137cd0239c5d509b49e04d7f964056f0c84ff57048527341            True
+
+# The Build service recognizes the new builder and adds it to the list of builders
+> pb builder list
+Cluster Builders
+----------------
+default
+todos-demo-cluster-bellsoft-builder
+todos-demo-cluster-builder
+```
+
+We can now build images using the new ```Bellsoft-Liberica``` buildpack. To start we create a new Image resource:
+```yaml
+# tbs-image-bellsoft-branch.yaml
+source:
+  git:
+    url: https://github.com/ddobrin/cnb-springboot 
+    revision: rel-bellsoft
+image:
+  tag: triathlonguy/cnb-demo:rel-bellsoft
+builder:
+  name: todos-demo-cluster-bellsoft-builder
+  kind: CustomClusterBuilder  
+  scope: Cluster
+```
+
+The Image is created from the ```pb CLI```:
+```shell
+> pb image apply -f todos-k8s/tbs-image-bellsoft-branch.yaml
+
+# validate that the image has been created
+> pb image list
+Project: cnb-demo
+
+Images
+------
+index.docker.io/triathlonguy/cnb-demo:master
+index.docker.io/triathlonguy/cnb-demo:develop
+index.docker.io/triathlonguy/cnb-demo:rel-1.0.0
+index.docker.io/triathlonguy/cnb-demo:rel-bellsoft
+
+# Let's check on the status of the build
+> pb image builds index.docker.io/triathlonguy/cnb-demo:rel-bellsoft
+Build    Status      Started Time           Finished Time    Reason    Digest
+-----    ------      ------------           -------------    ------    ------
+    1    BUILDING    2020-05-08 10:13:45    --               CONFIG    --
+
+> pb image status index.docker.io/triathlonguy/cnb-demo:rel-bellsoft
+Image
+-----
+Status:          BUILDING
+Message:         N/A
+Latest Image:    N/A
+
+Last Successful Build
+---------------------
+ID:        N/A
+Reason:    N/A
+
+Last Failed Build
+-----------------
+ID:        N/A
+Reason:    N/A
+
+# after a few minutes, the first build is complete. 
+# subsequents builds are much faster due to caching 
+> pb image status index.docker.io/triathlonguy/cnb-demo:rel-bellsoft
+Image
+-----
+Status:          READY
+Message:         N/A
+Latest Image:    index.docker.io/triathlonguy/cnb-demo@sha256:d220373011ae773ec6588a6354de31eaf3418648df5f9dbe88bd827acdd295e2
+
+Last Successful Build
+---------------------
+ID:        1
+Reason:    CONFIG
+
+Last Failed Build
+-----------------
+ID:        N/A
+Reason:    N/A
 
 
+>pb image builds index.docker.io/triathlonguy/cnb-demo:rel-bellsoft
+Build    Status     Started Time           Finished Time          Reason    Digest
+-----    ------     ------------           -------------          ------    ------
+    1    SUCCESS    2020-05-08 10:13:45    2020-05-08 10:21:20    CONFIG    d220373011ae773ec6588a6354de31eaf3418648df5f9dbe88bd827acdd295e2
+```
+
+The buildpack can be inspected, it is the first build, and we can observe that the bellsofot-liberica buildpack has been used:
+```shell
+> pb image build index.docker.io/triathlonguy/cnb-demo:rel-bellsoft -b 1
+------------------
+Retrieving information for image "index.docker.io/triathlonguy/cnb-demo:rel-bellsoft" - build 1
+------------------
+STATUS
+     Status:     SUCCESS
+     Reasons:    Config
+     Image:      index.docker.io/triathlonguy/cnb-demo@sha256:d220373011ae773ec6588a6354de31eaf3418648df5f9dbe88bd827acdd295e2
+------------------
+BUILD DETAILS
+     Run Image:  gcr.io/paketo-buildpacks/run@sha256:d70bf0fe11d84277997c4a7da94b2867a90d6c0f55add4e19b7c565d5087206f
+     Builder:    triathlonguy/custom-bellsoft-builder@sha256:44f4d24b0e164a3425384b5f556dbfceba584c0c326393fd94daa6a49cebd362
+
+     Source:
+         Git:        https://github.com/ddobrin/cnb-springboot
+         Revision:   ae0fba980c21bdf8713aec670d18f5d6428dcb62
+     Buildpacks: 
+         Id:         paketo-buildpacks/bellsoft-liberica
+         Version:    2.5.2
+
+         Id:         paketo-buildpacks/maven
+         Version:    1.2.1
+
+         Id:         paketo-buildpacks/executable-jar
+         Version:    1.2.2
+
+         Id:         paketo-buildpacks/apache-tomcat
+         Version:    1.1.2
+
+         Id:         paketo-buildpacks/spring-boot
+         Version:    1.5.2
+
+         Id:         paketo-buildpacks/dist-zip
+         Version:    1.2.2
+
+------------------
+
+```
+
+# Bellsoft-liberica buildpack is updated 
+
+When the buildpack is updated in the image repository, for example from version 2.5.2 to version 2.5.3, the Tanzu Build Service starts the build process automatically, a new image is being created, we can inspect the it and observe that the version of bellsoft-liberica is at version 2.5.3:
+```shell
+> pb image build index.docker.io/triathlonguy/cnb-demo:rel-bellsoft -b 2
+------------------
+Retrieving information for image "index.docker.io/triathlonguy/cnb-demo:rel-bellsoft" - build 2
+------------------
+STATUS
+     Status:     SUCCESS
+     Reasons:    Buildpack
+     Image:      index.docker.io/triathlonguy/cnb-demo@sha256:339692da4d0d6b0bb4c3466f9cb90200e0e5e298f025ba596e282b92bc565eea
+------------------
+BUILD DETAILS
+     Run Image:  gcr.io/paketo-buildpacks/run@sha256:d70bf0fe11d84277997c4a7da94b2867a90d6c0f55add4e19b7c565d5087206f
+     Builder:    triathlonguy/custom-bellsoft-builder@sha256:b110b0343ed952719e6a13f3366519f717d3cdf151e9af66405fa3887581d5a5
+
+     Source:
+         Git:        https://github.com/ddobrin/cnb-springboot
+         Revision:   ae0fba980c21bdf8713aec670d18f5d6428dcb62
+     Buildpacks: 
+         Id:         paketo-buildpacks/bellsoft-liberica
+         Version:    2.5.3
+
+         Id:         paketo-buildpacks/maven
+         Version:    1.2.2
+
+         Id:         paketo-buildpacks/executable-jar
+         Version:    1.2.3
+
+         Id:         paketo-buildpacks/apache-tomcat
+         Version:    1.1.3
+
+         Id:         paketo-buildpacks/spring-boot
+         Version:    1.5.3
+
+         Id:         paketo-buildpacks/dist-zip
+         Version:    1.3.0
+
+------------------
+```
+
+![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/ccb-buildpack-update-bellsoft.png "Buildpack Updates")

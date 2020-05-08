@@ -1,0 +1,10 @@
+source:
+  git:
+    url: https://github.com/ddobrin/cnb-springboot 
+    revision: rel-bellsoft
+image:
+  tag: triathlonguy/cnb-demo:rel-bellsoft
+builder:
+  name: todos-demo-cluster-bellsoft-builder
+  kind: CustomClusterBuilder  
+  scope: Cluster
