@@ -26,7 +26,7 @@ Simply put, three things:
 #### B. [The Tanzu portfolio tools](/todos-docs/tanzu-portfolio.md)
 
 1. Tanzu Mission Control
-2. Wavefront for Tanzu platform
+2. [Wavefront for Tanzu platform](/todos-docs/wavefront.md)
 3. Cloud-native builds
     - 3.1 [Open-source: Cloud-native Buildpacks and Kpack](/todos-docs/tbs.md)
     - 3.2 [Tanzu Build Service - Automate the app source code-to-container lifecycle](/todos-docs/tbs-install.md)
