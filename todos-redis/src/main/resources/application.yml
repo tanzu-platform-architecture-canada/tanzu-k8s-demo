@@ -5,9 +5,9 @@ management:
   metrics:
     export:
       wavefront:
-        uri: https://vmware.wavefront.com
-        apiToken: <TOKEN>
-        step: PT10S
+#        uri: https://vmware.wavefront.com
+#        apiToken: <TOKEN>
+#        step: PT10S
           #proxy:
         #host: wavefront-proxy.wavefront.svc.cluster.local
         #port: 2878

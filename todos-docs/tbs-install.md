@@ -2,14 +2,14 @@
 
 ### A. Tanzu Build Service Setup
 * [Pre-requisites](#1)
-* [SETUP -  Tanzu Build Service - with a Default install and Builder](#2)
+* [SETUP -  Tanzu Build Service - with the Default Installer and Builder](#2)
 
-### B. Work with Default Builder
+### B. Build with the Default Builder
 
 * [USE -  Create a Project and build repositories automatically with the Default Builder](#3)
 * [MANAGE -  Update the Build Service Stack from the VMware Tanzu Network - Build Service Dependencies](#6)
 
-### C. Custom Builders
+### C. Build with Custom Builders
 * [CREATE -  Custom Cluster Builder in the Build Service](#4)
 * [USE -  Build repositories with Custom Builders](#5)
 * [AUTOMATIC UPDATES -  Automatic build updates when buildpacks change](#7)
@@ -66,7 +66,7 @@ credentials:
 ```
 
 <a name="2"></a>
-## SETUP -  Tanzu Build Service - with a default install and Builder
+## SETUP -  Tanzu Build Service - with the Default Installer and Builder
 ```shell
 > duffle install tbs-deploy-local -c credentials --set kubernetes_env=docker-desktop --set docker_registry=index.docker.io --set docker_repository='triathlonguy'  --set registry_username='triathlonguy'  --set registry_password='ship2020pa'  --set custom_builder_image="triathlonguy/default-builder" -f /tmp/build-service-0.1.0.tgz  -m /tmp/relocated.json -v
 
@@ -108,7 +108,7 @@ CLI Version: 0.1.0 (e9b0e13a)
 ```
 
 <a name="3"></a>
-# B. Default Builder
+# B. Build with the Default Builder
 ## USE -  Create a Project and build repositories automatically with the Default Builder
 
 #### The Demo app - CNB SpringBoot demo 
@@ -135,7 +135,7 @@ cnb-demo
 
 #### Target the project
 ```shell
-> pb target project cnb-demo
+> pb project target cnb-demo
 Successfully set 'cnb-demo' as target. Subsequent commands will assume you are targeting 'cnb-demo'
 ```
 
@@ -198,7 +198,7 @@ Successfully created registry secret for 'https://index.docker.io/v1/' in projec
 #### Set up image configurations
 ##### master branch
 ```yaml
-# cnb-demo-config.yml
+# tbs-image-master-branch.yaml
 source:
   git:
     url: https://github.com/ddobrin/cnb-springboot 
@@ -209,18 +209,18 @@ image:
 
 ##### develop branch
 ```yaml
-# cnb-demo-config-develop.yml
+# tbs-image-master-develop.yaml
 source:
   git:
     url: https://github.com/ddobrin/cnb-springboot 
-    revision: master
+    revision: develop
 image:
   tag: triathlonguy/cnb-demo:develop
 ```
 
 #### Create the image
 ```shell
-> pb image apply -f cnb-demo-config.yml 
+> pb image apply -f tbs-image-master-branch.yaml
 Successfully applied image configuration 'triathlonguy/cnb-demo' in project 'cnb-demo'
 ```
 
@@ -247,6 +247,22 @@ Build    Status     Started Time           Finished Time          Reason    Dige
     1    SUCCESS    2020-04-27 14:07:58    2020-04-27 14:11:14    CONFIG    292f6c85268af3b5c499ee49c2433d2ff02afe48b70a47719788818ce12b6629
 ```
 
+#### Repeat the process for the develop branch 
+```shell
+> pb image builds triathlonguy/cnb-demo:develop
+Build    Status     Started Time           Finished Time          Reason    Digest
+-----    ------     ------------           -------------          ------    ------
+    1    SUCCESS    2020-05-12 14:44:02    2020-05-12 14:46:19    CONFIG    999202ad7e6d0b260d5f13c37e1970beb9e5a5c2465da6251333b74a0b0d5f1a
+
+> pb image list
+Project: cnb-demo
+
+Images
+------
+index.docker.io/triathlonguy/cnb-demo:master
+index.docker.io/triathlonguy/cnb-demo:develop
+```
+
 #### Image can be viewed in DockerHub
 ```shell
 https://hub.docker.com/repository/docker/triathlonguy/cnb-demo
@@ -257,9 +273,11 @@ https://hub.docker.com/repository/docker/triathlonguy/cnb-demo
 docker pull triathlonguy/cnb-demo:b1.20200427.180758
 ```
 
-#### Pull it and then start it locally
+#### Pull it and then start it locally - view the output at http://localhost:8080/
 ```shell
 > docker run --rm -p 8080:8080/tcp triathlonguy/cnb-demo:master
+
+> docker run --rm -p 8080:8080/tcp triathlonguy/cnb-demo:develop
 ```
 
 #### Commit a code change to Github - observe the build starting
@@ -360,7 +378,7 @@ Build    Status     Started Time           Finished Time          Reason    Dige
 ```
 
 <a name="4"></a>
-# C. Custom Builders
+# C. Build with Custom Builders
 ## CREATE -  Custom Cluster Builder in the Build Service
 
 #### Create a Store resource
@@ -368,6 +386,7 @@ The Store provides a collection of buildpacks that can be utilized by Builders. 
 
 Build Service ships with curated collection of Tanzu buildpacks for Java, Nodejs, Python, go, PHP, httpd, and Dotnet. It is important to keep these buildpacks up-to-date. Updates to these buildpacks are provided on the Tanzu Network Build Service Dependency page.
 ```yaml
+# tbs-store.yaml
 apiVersion: experimental.kpack.pivotal.io/v1alpha1
 kind: Store
 metadata:
@@ -402,6 +421,7 @@ The Stack provides the build and run images for the Cloud Native Buildpack stack
 Build Service ships with the org.cloudfoundry.stacks.cflinuxfs3 stack. Updates to this stack are provided on the Tanzu Network Build Service Dependency page.
 
 ```yaml
+# tbs-stack.yaml
 apiVersion: experimental.kpack.pivotal.io/v1alpha1
 kind: Stack
 metadata:
@@ -434,6 +454,7 @@ Build Image: docker.io/triathlonguy/tbs-dependencies-build-adb6d35d10815f4cc4835
 A builder references the stack and buildpacks that are used in the process of building source code. They “provide” the buildpacks that run against the application and the OS images upon which the application is built and run.
 
 ```yaml
+# tbs-custom-cluster-builder.yaml
 apiVersion: experimental.kpack.pivotal.io/v1alpha1
 kind: CustomClusterBuilder
 metadata:
@@ -490,31 +511,8 @@ Build Service will monitor the inputs to the image configuration to rebuild the 
 Image definitions allow you to specify the source repository and it's respective branch, as well as any environment paramters of choice.
 
 ```yaml
-# Demo project - Master branch
-source:
-  git:
-    url: https://github.com/ddobrin/cnb-springboot 
-    revision: master
-image:
-  tag: triathlonguy/cnb-demo:master
-builder:
-  name: todos-demo-cluster-builder
-  kind: CustomClusterBuilder  
-  scope: Cluster
-
-# Demo project - develop branch
-source:
-  git:
-    url: https://github.com/ddobrin/cnb-springboot 
-    revision: develop
-image:
-  tag: triathlonguy/cnb-demo:develop
-builder:
-  name: todos-demo-cluster-builder
-  kind: CustomClusterBuilder  
-  scope: Cluster
-
 # Demo project - Release branch rel-1.0.0
+# tbs-image-release-branch.yaml
 source:
   git:
     url: https://github.com/ddobrin/cnb-springboot 
@@ -529,9 +527,7 @@ builder:
 
 Images are added to the Build Service using the ```pb CLI```:
 ```shell
-> pb image add -f cnb-demo-config-master.yml
-> pb image add -f cnb-demo-config-develop.yml
-> pb image add -f cnb-demo-config-rel-1.0.0.yml
+> pb image apply -f tbs-image-release-branch.yaml
 
 # Validate that the image has been created
 > pb image list

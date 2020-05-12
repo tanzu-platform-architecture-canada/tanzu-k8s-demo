@@ -1,0 +1,6 @@
+source:
+  git:
+    url: https://github.com/ddobrin/cnb-springboot 
+    revision: develop
+image:
+  tag: triathlonguy/cnb-demo:develop
