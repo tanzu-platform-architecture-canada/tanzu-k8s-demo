@@ -1,0 +1,26 @@
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: CustomClusterBuilder
+metadata:
+  name: todos-demo-cluster-managed-builder
+spec:
+  tag: triathlonguy/custom-managed-builder
+  stack: managed-stack
+  store: todos-demo-store-managed
+  serviceAccountRef:
+    name: ccb-service-account
+    namespace: build-service
+  order:
+  - group:
+    - id: paketo-buildpacks/bellsoft-liberica
+    - id: paketo-buildpacks/gradle
+      optional: true
+    - id: paketo-buildpacks/maven
+      optional: true
+    - id: paketo-buildpacks/executable-jar
+      optional: true
+    - id: paketo-buildpacks/apache-tomcat
+      optional: true
+    - id: paketo-buildpacks/spring-boot
+      optional: true
+    - id: paketo-buildpacks/dist-zip
+      optional: true

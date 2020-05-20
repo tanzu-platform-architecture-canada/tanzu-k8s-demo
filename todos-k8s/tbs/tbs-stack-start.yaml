@@ -1,0 +1,21 @@
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Stack
+metadata:
+  name: managed-stack
+spec:
+  id: "io.buildpacks.stacks.bionic"
+  buildImage:
+    image: "cloudfoundry/build:0.0.1-base-cnb"
+  runImage:
+    image: "cloudfoundry/run:0.0.1-base-cnb"
+
+  # buildImage:
+  #   image: "gcr.io/paketo-buildpacks/build:0.0.12-base-cnb"
+  # runImage:
+  #   image: "gcr.io/paketo-buildpacks/run:0.0.12-base-cnb"
+# spec:
+#   id: "io.buildpacks.stacks.bionic"
+#   buildImage:
+#     image: "gcr.io/paketo-buildpacks/build:base-cnb"
+#   runImage:
+#     image: "gcr.io/paketo-buildpacks/run:base-cnb"

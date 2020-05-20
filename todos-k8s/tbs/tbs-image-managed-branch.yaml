@@ -1,0 +1,10 @@
+source:
+  git:
+    url: https://github.com/ddobrin/cnb-springboot 
+    revision: rel-managed
+image:
+  tag: triathlonguy/cnb-demo:rel-managed
+builder:
+  name: todos-demo-cluster-managed-builder
+  kind: CustomClusterBuilder  
+  scope: Cluster

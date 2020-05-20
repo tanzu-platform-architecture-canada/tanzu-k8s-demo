@@ -14,6 +14,9 @@
 * [USE -  Build repositories with Custom Builders](#5)
 * [AUTOMATIC UPDATES -  Automatic build updates when buildpacks change](#7)
 * [MANAGE -  Updating Store, Stack and Custom Builder resources for an Image](#8)
+
+### D. Additional Management guidelines and options
+* [MANAGE - Additional options](#9)
 ---
 
 <a name="1"></a>
@@ -1034,3 +1037,252 @@ BUILD DETAILS
 ```
 
 ![alt text](https://github.com/tanzu-platform-architecture-canada/tanzu-k8s-demo/blob/master/images/ccb-buildpack-update-bellsoft.png "Buildpack Updates")
+
+<a name="9"></a>
+# D. Additional Management guidelines and options
+## MANAGE - Additional options
+
+### STORE
+```yaml
+# tbs-store-start.yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Store
+metadata:
+  name: todos-demo-store-managed
+spec:
+  sources:
+  - image: gcr.io/paketo-buildpacks/builder:0.0.144-base
+```
+
+```shell
+> kubectl apply -f tbs-store-start.yaml 
+store.experimental.kpack.pivotal.io/todos-demo-store-managed created
+
+> kubectl get store
+NAME                        READY
+build-service-store         True
+todos-demo-store            True
+todos-demo-store-bellsoft   True
+todos-demo-store-managed    True
+
+> kubectl get store todos-demo-store-managed -o yaml 
+# Note:
+# uses the Bellsoft-Liberica Java buildpack version 2.5.0
+...
+    storeImage:
+      image: gcr.io/paketo-buildpacks/builder:0.0.144-base
+...
+- api: "0.2"
+    diffId: sha256:4fd0f22144331249e2ac2f7a9d95d33f960bb2353288913408c1e942adf0aa7e
+    digest: sha256:95985cb5b676f14b8d7e8d9fd19c64a1e9c0e689d2c766ec8ecca118c809e885
+    id: paketo-buildpacks/java
+    order:
+    - group:
+      - id: paketo-buildpacks/bellsoft-liberica
+        optional: true
+        version: 2.5.0
+...
+```
+
+```yaml
+# tbs-store-update.yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Store
+metadata:
+  name: todos-demo-store-managed
+spec:
+  sources:
+  - image: gcr.io/paketo-buildpacks/builder:0.0.154-base
+```
+
+```shell
+> kubectl get store todos-demo-store-managed -o yaml 
+
+# Note:
+# uses the Bellsoft-LIberica Java buildpack version 2.5.0
+...
+    storeImage:
+      image: gcr.io/paketo-buildpacks/builder:0.0.154-base
+...
+ - api: "0.2"
+    diffId: sha256:623f22ff50bdcee2a0bfb7d9aaa11ec71cd95199fcfa92909c2b54db417e94be
+    digest: sha256:5d8e4b4404bd00a5cb5020e0508a3b0d697c982f005ac128349e2c78f23acca0
+    id: paketo-buildpacks/java
+    order:
+    - group:
+      - id: paketo-buildpacks/bellsoft-liberica
+        optional: true
+        version: 2.5.3
+
+...
+```
+
+### STACK 
+```yaml
+# tbs-stack-start.yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Stack
+metadata:
+  name: managed-stack
+spec:
+  id: "io.buildpacks.stacks.bionic"
+  buildImage:
+    image: "gcr.io/paketo-buildpacks/build:0.0.12-base-cnb"
+  runImage:
+    image: "gcr.io/paketo-buildpacks/run:0.0.12-base-cnb"
+```
+
+```shell
+> kubectl apply -f tbs-stack-start.yaml
+stack.experimental.kpack.pivotal.io/managed-stack created
+
+> kubectl get stack
+NAME                  READY
+base-cnb              True
+bellsoft-liberica     True
+build-service-stack   True
+managed-stack         True
+
+> kubectl get stack managed-stack -o yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Stack
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"experimental.kpack.pivotal.io/v1alpha1","kind":"Stack","metadata":{"annotations":{},"name":"managed-stack"},"spec":{"buildImage":{"image":"gcr.io/paketo-buildpacks/build:0.0.12-base-cnb"},"id":"io.buildpacks.stacks.bionic","runImage":{"image":"gcr.io/paketo-buildpacks/run:0.0.12-base-cnb"}}}
+  creationTimestamp: "2020-05-13T19:16:08Z"
+  generation: 1
+  name: managed-stack
+  resourceVersion: "3245217"
+  selfLink: /apis/experimental.kpack.pivotal.io/v1alpha1/stacks/managed-stack
+  uid: e08e34ed-1700-4bdf-a2a4-b63206153c63
+spec:
+  buildImage:
+    image: gcr.io/paketo-buildpacks/build:0.0.12-base-cnb
+  id: io.buildpacks.stacks.bionic
+  runImage:
+    image: gcr.io/paketo-buildpacks/run:0.0.12-base-cnb
+status:
+  buildImage:
+    image: gcr.io/paketo-buildpacks/build:0.0.12-base-cnb
+    latestImage: gcr.io/paketo-buildpacks/build@sha256:d2b97879caf03016126ab3ca5d2fb4dbaa3ee0dbc095eb60febcac2bdf0004d1
+...
+```
+
+```yaml
+# tbs-stack-update.yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Stack
+metadata:
+  name: managed-stack
+spec:
+  id: "io.buildpacks.stacks.bionic"
+  buildImage:
+    image: "gcr.io/paketo-buildpacks/build:0.0.13-base-cnb"
+  runImage:
+    image: "gcr.io/paketo-buildpacks/run:0.0.13-base-cnb"
+```
+
+```shell
+> kubectl apply -f tbs-stack-update.yaml
+stack.experimental.kpack.pivotal.io/managed-stack configured
+
+> kubectl get stack managed-stack -o yaml
+
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Stack
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"experimental.kpack.pivotal.io/v1alpha1","kind":"Stack","metadata":{"annotations":{},"name":"managed-stack"},"spec":{"buildImage":{"image":"gcr.io/paketo-buildpacks/build:0.0.13-base-cnb"},"id":"io.buildpacks.stacks.bionic","runImage":{"image":"gcr.io/paketo-buildpacks/run:0.0.13-base-cnb"}}}
+  creationTimestamp: "2020-05-13T19:16:08Z"
+  generation: 3
+  name: managed-stack
+  resourceVersion: "3245810"
+  selfLink: /apis/experimental.kpack.pivotal.io/v1alpha1/stacks/managed-stack
+  uid: e08e34ed-1700-4bdf-a2a4-b63206153c63
+spec:
+  buildImage:
+    image: gcr.io/paketo-buildpacks/build:0.0.13-base-cnb
+  id: io.buildpacks.stacks.bionic
+  runImage:
+    image: gcr.io/paketo-buildpacks/run:0.0.13-base-cnb
+status:
+  buildImage:
+    image: gcr.io/paketo-buildpacks/build:0.0.13-base-cnb
+...
+```
+
+### CUSTOM CLUSTER BUILDER
+```yaml
+# tbs-ccb-start.yaml
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: CustomClusterBuilder
+metadata:
+  name: todos-demo-cluster-managed-builder
+spec:
+  tag: triathlonguy/custom-managed-builder
+  stack: managed-stack
+  store: todos-demo-store-managed
+  serviceAccountRef:
+    name: ccb-service-account
+    namespace: build-service
+  order:
+  - group:
+    - id: paketo-buildpacks/bellsoft-liberica
+    - id: paketo-buildpacks/gradle
+      optional: true
+    - id: paketo-buildpacks/maven
+      optional: true
+    - id: paketo-buildpacks/executable-jar
+      optional: true
+    - id: paketo-buildpacks/apache-tomcat
+      optional: true
+    - id: paketo-buildpacks/spring-boot
+      optional: true
+    - id: paketo-buildpacks/dist-zip
+      optional: true
+```
+
+```shell
+> kubectl apply -f tbs-ccb-start.yaml
+customclusterbuilder.experimental.kpack.pivotal.io/todos-demo-cluster-managed-builder created
+
+> kubectl get ccb
+NAME                                  LATESTIMAGE                                                                                                    READY
+default                               triathlonguy/default-builder@sha256:fd01fef73092e1d71342e4802d112b43a0b26e73a721d73a3c11ae52d6d1cbe8           True
+todos-demo-cluster-bellsoft-builder   triathlonguy/custom-bellsoft-builder@sha256:8f007ffd98d8ead15ddbc7430f2738b58080841a1ed300e626c8dc272adbbdad   True
+todos-demo-cluster-builder            triathlonguy/custom-builder@sha256:fcd03a10a7548a5f4b9d975131410b0bb21246036437802d5e1266bfcc9a419b            True
+todos-demo-cluster-managed-builder    triathlonguy/custom-managed-builder@sha256:ffc380e3be7fb9e6a8d220e7adbaa1f7ea940ee4ede199ba0d179f7ce442edc5    True
+
+> kubectl get ccb todos-demo-cluster-managed-builder -o yaml
+
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: CustomClusterBuilder
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"experimental.kpack.pivotal.io/v1alpha1","kind":"CustomClusterBuilder","metadata":{"annotations":{},"name":"todos-demo-cluster-managed-builder"},"spec":{"order":[{"group":[{"id":"paketo-buildpacks/bellsoft-liberica"},{"id":"paketo-buildpacks/gradle","optional":true},{"id":"paketo-buildpacks/maven","optional":true},{"id":"paketo-buildpacks/executable-jar","optional":true},{"id":"paketo-buildpacks/apache-tomcat","optional":true},{"id":"paketo-buildpacks/spring-boot","optional":true},{"id":"paketo-buildpacks/dist-zip","optional":true}]}],"serviceAccountRef":{"name":"ccb-service-account","namespace":"build-service"},"stack":"managed-stack","store":"todos-demo-store-managed","tag":"triathlonguy/custom-managed-builder"}}
+  creationTimestamp: "2020-05-13T19:31:11Z"
+  generation: 1
+  name: todos-demo-cluster-managed-builder
+  ...
+spec:
+  order:
+  - group:
+    - id: paketo-buildpacks/bellsoft-liberica
+    - id: paketo-buildpacks/gradle
+      optional: true
+...
+  serviceAccountRef:
+    name: ccb-service-account
+    namespace: build-service
+  stack: managed-stack
+  store: todos-demo-store-managed
+  tag: triathlonguy/custom-managed-builder
+status:
+  builderMetadata:
+  - id: paketo-buildpacks/bellsoft-liberica
+    version: 2.5.0
+...
+```

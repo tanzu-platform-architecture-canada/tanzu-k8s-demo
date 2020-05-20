@@ -1,0 +1,12 @@
+apiVersion: experimental.kpack.pivotal.io/v1alpha1
+kind: Store
+metadata:
+  name: todos-demo-store-managed
+spec:
+  sources:
+  # - image: cloudfoundry/cnb:0.0.81-bionic
+  - image: gcr.io/paketo-buildpacks/builder:0.0.85-bionic
+# spec:
+#   sources:
+#   - image: gcr.io/paketo-buildpacks/builder:0.0.144-base
+#   - image: gcr.io/paketo-buildpacks/builder:0.0.100-bionic
