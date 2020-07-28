@@ -6,5 +6,5 @@ metadata:
     build.pivotal.io/git: https://github.com
 type: kubernetes.io/basic-auth
 stringData:
-  username: ddobrin
+  username: xxxyyy
   password: xxxyyy
