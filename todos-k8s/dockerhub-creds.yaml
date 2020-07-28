@@ -7,5 +7,5 @@ metadata:
 type: kubernetes.io/basic-auth
 stringData:
   username: triathlonguy
-  password: ship2020#
+  password: xxxyyy
 
