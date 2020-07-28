@@ -6,6 +6,6 @@ metadata:
     build.pivotal.io/docker: https://index.docker.io/v1/
 type: kubernetes.io/basic-auth
 stringData:
-  username: triathlonguy
+  username: xxxyyy
   password: xxxyyy
 
